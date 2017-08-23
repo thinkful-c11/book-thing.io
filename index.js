@@ -13,6 +13,7 @@ let knex;
 const runServer = (database = DATABASE, port = PORT) => {
   return new Promise((resolve, reject) => {
     try {
+      console.log("Database: ", database, "Port: ", port);
       knex = require('knex')(database);
       server = app.listen(port, () => {
         resolve();
