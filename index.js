@@ -1,16 +1,24 @@
 const express = require('express');
-const {DATABASE, PORT} = require('./config');
+const {TEST_DATABASE, PORT} = require('./config');
 
 const app = express();
 
 app.get('/api/library', (req, res) => {
-  res.status(200).json([{title: 'me', author: 'me', summary: 'This is me', 'id': 1}]);
+  knex.select('*').from('books')
+  .then(results => {
+    res.json(results);
+  })
+  .catch(error => {
+    res.status(500)
+      console.error('Internal sever error', error);
+
+  });
 });
 
 let server;
 let knex;
 
-const runServer = (database = DATABASE, port = PORT) => {
+const runServer = (database = TEST_DATABASE, port = PORT) => {
   return new Promise((resolve, reject) => {
     try {
       console.log("Database: ", database, "Port: ", port);

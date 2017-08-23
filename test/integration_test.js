@@ -46,42 +46,46 @@ describe('Book-thing.io:', () => {
 
     it('should return books with correct fields', () => {
       let res;
-      return chai.request(app)
-        .get('/api/library')
+      const newItem = {
+        title: 'Test title',
+        author: 'test author',
+        summary: 'test description'
+      };
+      return knex('books')
+        .insert(newItem)
+        .returning()
+        .then(_res => {
+          return chai.request(app).get('/api/library').send();
+        })
         .then(_res => {
           res = _res;
           res.should.be.json;
           res.body.should.be.an('array');
           res.body.should.have.length.of.at.least(1);
-
-          res.body.forEach(book => {
-            book.should.be.an('object');
-            book.should.include.keys('title', 'author', 'summary', 'id');
-          });
         });
     });
 
     it('should draw the data from a database', () => {
-        const newItem = {
-          title: 'Test title',
-          author: 'test author',
-          summary: 'test description'
-        };
-        return knex('books')
-            .insert(newItem)
-            .returning()
-            .then(_res => {
-              return chai.request(app).get('/api/library').send();
-            })
-            .then(_res => {
-              let res = _res;
-              res.body.forEach((book, index) => {
-                book.id.should.be.an("number");
-                book.author.should.be.equal(newItem.author);
-                book.summary.should.be.equal(newItem.summary);
-                book.title.should.be.equal(newItem.title);
-             })
-           });
+      const newItem = {
+        title: 'Test title',
+        author: 'test author',
+        summary: 'test description'
+      };
+      return knex('books')
+        .insert(newItem)
+        .returning()
+        .then(_res => {
+          return chai.request(app).get('/api/library').send();
+        })
+        .then(_res => {
+          let res = _res;
+          res.body.forEach((book, index) => {
+            book.id.should.be.an('number');
+            book.author.should.be.equal(newItem.author);
+            book.summary.should.be.equal(newItem.summary);
+            book.title.should.be.equal(newItem.title);
+          });
+        });
     });
   });
-})
+});
