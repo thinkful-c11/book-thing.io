@@ -15,4 +15,21 @@ describe("Get endpoint", function() {
              res.should.have.status(200);
            })
   })
+
+  it('should return books with correct fields', function() {
+    let res;
+    return chai.request(app)
+      .get('/resource')
+      .then(_res => {
+        res.should.have.status(200);
+        res.should.be.json;
+        res.body.should.be.an('array');
+        res.body.should.have.length.of.at.least(1);
+
+        res.body.forEach(book => {
+          book.should.be.an('object');
+          book.should.include.keys('title', 'author', 'description', 'id');
+        });
+      })
+  })
 })
