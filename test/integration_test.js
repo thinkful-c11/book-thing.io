@@ -2,6 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
 const {app} = require('../index');
+const {DATABASE} = require('../config');
 chai.use(chaiHttp);
 
 
@@ -22,7 +23,6 @@ describe("Get endpoint", () => {
       .get('/api/library')
       .then(_res => {
         res = _res;
-        res.should.have.status(200);
         res.should.be.json;
         res.body.should.be.an('array');
         res.body.should.have.length.of.at.least(1);
@@ -34,9 +34,18 @@ describe("Get endpoint", () => {
       })
   })
 
-  xit('should draw the data from a database', () => {
-      //pull data from the database
-      //get the data from the endpoint
-      //make sure the data matches
+  it('should draw the data from a database', () => {
+      let res;
+      return chai.request(app)
+        .get('/api/library')
+        .then(_res => {
+          res = _res;
+          res.body.forEach((book, index) => {
+            book.id.should.be.equal(DATABASE[index].id);
+            book.author.should.be.equal(DATABASE[index].author);
+            book.description.should.be.equal(DATABASE[index].description);
+            book.title.should.be.equal(DATABASE[index].title);
+          })
+        })
   })
 })
