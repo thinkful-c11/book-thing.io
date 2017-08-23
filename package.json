@@ -4,6 +4,7 @@
   "description": "Initial wireframes:",
   "main": "integration_test.js",
   "scripts": {
+    "start": "node index.js",
     "test": "mocha"
   },
   "repository": {

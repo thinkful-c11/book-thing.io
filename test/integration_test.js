@@ -1,11 +1,36 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
-const {app} = require('../index');
-const {DATABASE} = require('../config');
+const {app, runServer, closeServer} = require('../index');
+const {TEST_DATABASE} = require('../config');
+const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
 describe('Book-thing.io:', () => {
+
+  before(() => runServer(TEST_DATABASE));
+
+  after(() => {
+    return knex.destroy()
+      .then(closeServer);
+  });
+
+  beforeEach(() => {
+  return knex('books')
+    .del()
+    .catch((err) => {
+      console.error('ERROR', err.message);
+    });
+});
+
+// afterEach test, delete the test items in the table
+afterEach(() => {
+  return knex('books')
+    .del()
+    .catch((err) => {
+      console.error('ERROR', err.message);
+    });
+});
 
   describe("GET endpoint", () => {
     it('should return a status of 200', () => {
@@ -30,24 +55,32 @@ describe('Book-thing.io:', () => {
 
           res.body.forEach(book => {
             book.should.be.an('object');
-            book.should.include.keys('title', 'author', 'description', 'id');
+            book.should.include.keys('title', 'author', 'summary', 'id');
           });
         });
     });
 
     it('should draw the data from a database', () => {
-        let res;
-        return chai.request(app)
-          .get('/api/library')
-          .then(_res => {
-            res = _res;
-            res.body.forEach((book, index) => {
-              book.id.should.be.equal(DATABASE[index].id);
-              book.author.should.be.equal(DATABASE[index].author);
-              book.description.should.be.equal(DATABASE[index].description);
-              book.title.should.be.equal(DATABASE[index].title);
+        const newItem = {
+          title: 'Test title',
+          author: 'test author',
+          summary: 'test description'
+        };
+        return knex('books')
+            .insert(newItem)
+            .returning()
+            .then(_res => {
+              return chai.request(app).get('/api/library').send();
             })
-          });
+            .then(_res => {
+              let res = _res;
+              res.body.forEach((book, index) => {
+                book.id.should.be.Number;
+                book.author.should.be.equal(newItem.author);
+                book.summary.should.be.equal(newItem.summary);
+                book.title.should.be.equal(newItem.title);
+             })
+           });
     });
   });
 })
