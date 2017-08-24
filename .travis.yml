@@ -1,0 +1,9 @@
+language: node_js
+node_js: node
+deploy:
+  provider: heroku
+  api_key:
+    secure: qjNpgXBEkppIoGbgxwyx/drabKYENUbsRpBSnnStBZOJ+EgXIRfW/DfurdBLCkJ42roFvvaFF6gldkJAxXvnUhy5kv/EZ7uduvWyu2YDUSwcPkiCPE3lOOoZC+tP1BQRLXO7Yvd8AP4H/6JTBmGZoMWhQ4VL3TpfJSD7z6SP/+tRZYoH4Lq4k2tgcRDfnpkbaPaWn8Jdw2etVdbyQLqCM+ryLkuT8d7GvhcA2hZbFrlcE4Ft/cxOWuQSWNjm+BC9+pNdVYjzcxcCxHaTugX6g7eDwUJnsZ7znDkIXMygscES1p7ZGvO6b9FhKalEIEew8A42cy7j0JcGtdLmHqRzwnaWAx3kWz9597cz48yinKN4XrmiswK3oytrJXoLxRETpXZLRE6vloDUlGt521PX+ZlR5KqLDU6LFBccikwhKS6ZMXQZUeUoItuwrQdHu8DZa1h2IOVzDUqGyOZbMveoRHfRKu6RosKnKt7NphByCnkqGVid2JSwX/nuBIstH+QWUeIX+GBw0vZDoShxpPdaUBl9XVVXLKkOvl1uM0bTXRWv+Y+uL/k7FQog3MExoRh4MMa0YQAat82v8kGiE/x0iAlSo4s+NWpxrytOYAK67P7Mw9c1H4O6KRixbDrRLhuhve/inAy5dGPfCjBJ6FbkFM8KwWrkxRY1a/pYNRFXSOs=
+  app: book-thing.io
+  on:
+    repo: thinkful-c11/book-thing.io
