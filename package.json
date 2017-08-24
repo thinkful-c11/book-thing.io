@@ -17,6 +17,10 @@
     "type": "git",
     "url": "git+https://github.com/thinkful-c11/book-thing.io.git"
   },
+  "cacheDirectories":[
+    "node_modules",
+    "server/node_modules"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
