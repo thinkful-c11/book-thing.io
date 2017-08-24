@@ -12,7 +12,7 @@
   "devDependencies": {},
   "scripts": {
     "start": "cd server &&  npm install && nodemon index.js",
-    "test": "cd server && mocha"
+    "test": "cd server &&  npm install && mocha"
   },
   "repository": {
     "type": "git",
