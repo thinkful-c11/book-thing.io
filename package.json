@@ -3,14 +3,11 @@
   "version": "1.0.0",
   "description": "Initial wireframes:",
   "main": "index.js",
-  "dependencies": {
-    "chai": "^4.1.1",
-    "chai-http": "^3.0.0",
-    "mocha": "^3.5.0"
-  },
+  "dependencies": {},
   "devDependencies": {},
   "scripts": {
-    "test": "cd server && npm install && mocha"
+    "start": "nodemon index.js",
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
