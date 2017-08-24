@@ -11,8 +11,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "start": "cd server && nodemon index.js",
-    "test": "cd server && npm install && mocha"
+    "start": "cd server &&  npm install && nodemon index.js",
+    "test": "cd server && mocha"
   },
   "repository": {
     "type": "git",
