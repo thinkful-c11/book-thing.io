@@ -1,37 +1,37 @@
-const express = require('express');
-const {DATABASE, PORT} = require('./config');
+const express = require("express");
+const { DATABASE, PORT } = require("./config");
 
 const app = express();
 
-app.get('/api/library', (req, res) => {
-  knex.select('*').from('books')
-  .then(results => {
-    res.json(results);
-  })
-  .catch(error => {
-    res.status(500)
-      console.error('Internal sever error', error);
-
-  });
+app.get("/api/library", (req, res) => {
+  knex
+    .select("*")
+    .from("books")
+    .then(results => {
+      res.json(results);
+    })
+    .catch(error => {
+      res.status(500);
+      console.error("Internal sever error", error);
+    });
 });
 
 let server;
 let knex;
 
-const runServer = (database = DATABASE, port = PORT) => {
+const runServer = (port = PORT, database = DATABASE) => {
   return new Promise((resolve, reject) => {
     try {
       console.log("Database: ", database, "Port: ", port);
-      knex = require('knex')(database);
+      knex = require("knex")(database);
       server = app.listen(port, () => {
         resolve();
       });
-    }
-    catch (err) {
+    } catch (err) {
       reject(err);
     }
   });
-}
+};
 
 const closeServer = () => {
   return knex.destroy().then(() => {
@@ -44,7 +44,7 @@ const closeServer = () => {
       });
     });
   });
-}
+};
 
 if (require.main === module) {
   runServer().catch(err => {
@@ -52,4 +52,4 @@ if (require.main === module) {
     throw err;
   });
 }
-module.exports = {app, runServer, closeServer};
+module.exports = { app, runServer, closeServer };

@@ -1,31 +1,30 @@
 {
-  "name": "book-thing.io",
-  "version": "1.0.0",
-  "description": "Initial wireframes:",
+  "name": "boot-thing.io",
+  "version": "0.1.0",
+  "description": "A full-stack starter template",
   "main": "index.js",
-  "dependencies": {
-    "chai": "^4.1.1",
-    "chai-http": "^3.0.0",
-    "mocha": "^3.5.0",
-    "nodemon": "^1.11.0"
-  },
-  "devDependencies": {},
   "scripts": {
-    "start": "cd server &&  npm install && nodemon index.js",
-    "test": "cd server &&  npm install && mocha"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/thinkful-c11/book-thing.io.git"
+    "start": "node index.js",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm run build",
+    "dev": "run-p dev:server dev:client start",
+    "dev:client": "cd client && cross-env BROWSER=none npm start -- --color=always | xp http://localhost:3000/ http://localhost:8080/",
+    "dev:server": "cd server && npm start",
+    "install": "run-s install:server install:client",
+    "install:server": "cd server && npm install",
+    "install:client": "cd client && npm install"
   },
   "cacheDirectories": [
     "node_modules",
-    "server/node_modules"
+    "server/node_modules",
+    "client/node_modules"
   ],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/thinkful-c11/book-thing.io/issues"
-  },
-  "homepage": "https://github.com/thinkful-c11/book-thing.io#readme"
+  "author": "Joe Turner <jturner@thinkful.com>",
+  "license": "MIT",
+  "dependencies": {
+    "cross-env": "^3.1.4",
+    "express": "^4.14.1",
+    "http-proxy-middleware": "^0.17.3",
+    "npm-run-all": "^4.0.1",
+    "xp": "^1.0.1"
+  }
 }
