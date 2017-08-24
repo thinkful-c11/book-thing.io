@@ -10,6 +10,12 @@ exports.TEST_DATABASE = {
   pool: { min: 0, max: 3}
 };
 
+exports.DATABASE = {
+  client: 'pg',
+  connection: DATABASE_URL,
+  pool: {min:0, max:3}
+}
+
 // exports.DATABASE = [
 //   {title: 'me', author: 'me', description: 'This is me', 'id': 1},
 //   {title: 'me', author: 'me', description: 'This is me', 'id': 1},

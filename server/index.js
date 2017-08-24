@@ -1,5 +1,5 @@
 const express = require('express');
-const {TEST_DATABASE, PORT} = require('./config');
+const {DATABASE, PORT} = require('./config');
 
 const app = express();
 
@@ -18,7 +18,7 @@ app.get('/api/library', (req, res) => {
 let server;
 let knex;
 
-const runServer = (database = TEST_DATABASE, port = PORT) => {
+const runServer = (database = DATABASE, port = PORT) => {
   return new Promise((resolve, reject) => {
     try {
       console.log("Database: ", database, "Port: ", port);
