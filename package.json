@@ -6,7 +6,8 @@
   "dependencies": {
     "chai": "^4.1.1",
     "chai-http": "^3.0.0",
-    "mocha": "^3.5.0"
+    "mocha": "^3.5.0",
+    "nodemon": "^1.11.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -17,7 +18,7 @@
     "type": "git",
     "url": "git+https://github.com/thinkful-c11/book-thing.io.git"
   },
-  "cacheDirectories":[
+  "cacheDirectories": [
     "node_modules",
     "server/node_modules"
   ],
