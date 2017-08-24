@@ -10,7 +10,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "cd server && mocha"
+    "test": "cd server && npm install && mocha"
   },
   "repository": {
     "type": "git",
