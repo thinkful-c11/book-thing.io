@@ -1,7 +1,15 @@
 const express = require("express");
+const path = require("path");
 const { DATABASE, PORT } = require("./config");
 
 const app = express();
+
+app.use(express.static(path.resolve(__dirname, "../client/build")));
+
+app.get(/^(?!\/api(\/|$))/, (req, res) => {
+  const index = path.resolve(__dirname, "../client/build", "index.html");
+  res.sendFile(index);
+});
 
 app.get("/api/library", (req, res) => {
   knex
