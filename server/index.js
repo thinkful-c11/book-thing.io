@@ -1,9 +1,16 @@
 const express = require("express");
 const path = require("path");
-const { DATABASE, PORT } = require("./config");
+const { TEST_DATABASE, PORT } = require("./config");
 
 const app = express();
 
+app.use(express.static(path.resolve(__dirname, "../client/build")));
+
+app.use(function (req, res, next) {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+});
 
 app.get("/api/library", (req, res) => {
   knex
@@ -11,15 +18,13 @@ app.get("/api/library", (req, res) => {
     .from("books")
     .then(results => {
       console.log(results);
-      res.status(200).json(results);
+      res.json(results);
     })
     .catch(error => {
       res.status(500);
       console.error("Internal sever error", error);
     });
 });
-
-app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.get(/^(?!\/api(\/|$))/, (req, res) => {
   const index = path.resolve(__dirname, "../client/build", "index.html");
@@ -29,7 +34,7 @@ app.get(/^(?!\/api(\/|$))/, (req, res) => {
 let server;
 let knex;
 
-const runServer = (port = 3001, database = DATABASE) => {
+const runServer = (port = PORT, database = TEST_DATABASE) => {
   return new Promise((resolve, reject) => {
     try {
       console.log("Database: ", database, "Port: ", port);
