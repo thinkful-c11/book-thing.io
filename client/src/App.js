@@ -1,8 +1,15 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
+import { fetchLibrary } from "./redux/actions";
+import store from "./redux";
 import "./App.css";
 
 class App extends Component {
+  componentDidMount() {
+    console.log("hello");
+    store.dispatch(fetchLibrary());
+  }
+
   render() {
     return (
       <div className="App">
