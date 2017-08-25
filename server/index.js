@@ -4,19 +4,14 @@ const { DATABASE, PORT } = require("./config");
 
 const app = express();
 
-app.use(express.static(path.resolve(__dirname, "../client/build")));
-
-app.get(/^(?!\/api(\/|$))/, (req, res) => {
-  const index = path.resolve(__dirname, "../client/build", "index.html");
-  res.sendFile(index);
-});
 
 app.get("/api/library", (req, res) => {
   knex
     .select("*")
     .from("books")
     .then(results => {
-      res.json(results);
+      console.log(results);
+      res.status(200).json(results);
     })
     .catch(error => {
       res.status(500);
@@ -24,10 +19,17 @@ app.get("/api/library", (req, res) => {
     });
 });
 
+app.use(express.static(path.resolve(__dirname, "../client/build")));
+
+app.get(/^(?!\/api(\/|$))/, (req, res) => {
+  const index = path.resolve(__dirname, "../client/build", "index.html");
+  res.sendFile(index);
+});
+
 let server;
 let knex;
 
-const runServer = (port = PORT, database = DATABASE) => {
+const runServer = (port = 3001, database = DATABASE) => {
   return new Promise((resolve, reject) => {
     try {
       console.log("Database: ", database, "Port: ", port);

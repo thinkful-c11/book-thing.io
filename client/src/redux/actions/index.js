@@ -10,11 +10,13 @@ export const setLibrary = books => ({
 });
 
 export const fetchLibrary = () => dispatch => {
-  return fetch("http://localhost:4000/api/library")
+  return fetch("/api/library")
     .then(response => {
+      console.log(response);
       if (!response.ok) {
         throw new Error(response.statusText);
       }
+      console.log("Are we here");
       return response.json();
     })
     .then(books => {
