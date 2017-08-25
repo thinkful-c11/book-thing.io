@@ -10,7 +10,7 @@ export const setLibrary = books => ({
 });
 
 export const fetchLibrary = () => dispatch => {
-  return fetch("http://localhost:4000/api/library")
+  return fetch("http://localhost:8080/api/library" ) 
     .then(response => {
       if (!response.ok) {
         throw new Error(response.statusText);
@@ -25,3 +25,11 @@ export const fetchLibrary = () => dispatch => {
       console.error(err);
     });
 };
+
+
+// {
+//   method: 'GET',
+//   headers: new Headers({
+//     'Access-Control-Allow-Origin': '*'
+//   })
+//   }
