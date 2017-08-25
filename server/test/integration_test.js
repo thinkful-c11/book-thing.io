@@ -9,7 +9,7 @@ chai.use(chaiHttp);
 
 describe('Book-thing.io:', () => {
 
-  before(() => runServer(TEST_DATABASE));
+  before(() => runServer(undefined, TEST_DATABASE));
 
   after(() => {
     return knex.destroy()
