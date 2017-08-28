@@ -1,10 +1,12 @@
 const express = require("express");
 const path = require("path");
 const { TEST_DATABASE, PORT } = require("./config");
+const parser = require("body-parser");
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../client/build")));
+app.use(parser.json());
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -26,14 +28,26 @@ app.get("/api/library", (req, res) => {
     .select("*")
     .from("books")
     .then(results => {
-      console.log(results);
       res.json(results);
     })
     .catch(error => {
       res.status(500);
-      console.error("Internal sever error", error);
+      console.error("Internal server error", error);
     });
 });
+
+app.post("/api/library", (req, res) => {
+  return knex("books")
+    .insert(req.body)
+    .returning('id')
+    .then(results => {
+      res.status(201).send();
+    })
+    .catch(error => {
+      res.status(500);
+      console.error("INternal server error", error);
+    })
+})
 
 app.get(/^(?!\/api(\/|$))/, (req, res) => {
   const index = path.resolve(__dirname, "../client/build", "index.html");
