@@ -16,7 +16,7 @@ class Recommendations extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    console.log("Look at me", this.props.myBooks);
     const books = this.props.myBooks.map((book, index) => {
       return (
         <li key={book.id}>

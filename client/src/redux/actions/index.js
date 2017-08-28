@@ -26,8 +26,6 @@ export const createBook = (books) => dispatch => {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }
-  }).then(book => {
-    dispatch(setLibrary(books));
   }).catch(err => {
     console.error(err);
   });
