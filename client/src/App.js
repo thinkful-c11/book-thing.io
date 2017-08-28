@@ -1,13 +1,14 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import logo from "./logo.svg";
 import store from "./redux";
 import "./App.css";
-import { Route } from "react-router-dom";
+import {Route} from "react-router-dom";
 
 //actions
-import { fetchLibrary } from "./redux/actions";
+import {fetchLibrary} from "./redux/actions";
 
 //components
+import Recommendations from "./recommendations";
 import Library from "./library";
 import Home from "./home";
 
@@ -20,8 +21,9 @@ class App extends Component {
   render() {
     return (
       <section>
-        <Route exact path="/" component={Home} />
-        <Route path="/library" component={Library} />
+        <Route exact path="/" component={Home}/>
+        <Route path="/library" component={Library}/>
+        <Route path="/recommendations" component={Recommendations}/>
       </section>
     );
   }

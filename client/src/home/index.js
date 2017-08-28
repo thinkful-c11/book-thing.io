@@ -2,7 +2,7 @@ import React from "react";
 import "./home.css";
 
 //components
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
 export default class Home extends React.Component {
   render() {
@@ -10,21 +10,27 @@ export default class Home extends React.Component {
       <section>
         <header>
           <nav>
-            <Link style={{ textDecoration: "none" }} to="/library">
+            <Link style={{
+              textDecoration: "none"
+            }} to="/library">
               <p>Library</p>
             </Link>
-            <Link style={{ textDecoration: "none" }} to="/recommendations">
+            <Link style={{
+              textDecoration: "none"
+            }} to="/recommendations">
               <p>Recommendations</p>
             </Link>
-            <Link style={{ textDecoration: "none" }} to="/sign-in">
+            <Link style={{
+              textDecoration: "none"
+            }} to="/sign-in">
               <p>Sign in</p>
             </Link>
           </nav>
           <section>
-            <img src="/images/header-img.png" />
+            <img src="/images/header-img.png"/>
             <div>
               <h1>
-                The Ultimate Book<br />Recommendation Engine
+                The Ultimate Book<br/>Recommendation Engine
               </h1>
               <Link to="/library">
                 <button>Get Started</button>
@@ -44,15 +50,13 @@ export default class Home extends React.Component {
             <div>
               <h3>Why Use Book-Thing.io</h3>
               <p>
-                We give you books you want to read not just the ones that sell
-                the best!
+                We give you books you want to read not just the ones that sell the best!
               </p>
             </div>
             <div>
               <h3>How to Use Book-Thing.io</h3>
               <p>
-                Simply Log-in, add books, and create recommendations for other
-                users that have read those books
+                Simply Log-in, add books, and create recommendations for other users that have read those books
               </p>
             </div>
           </section>
