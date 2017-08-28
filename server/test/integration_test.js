@@ -80,7 +80,7 @@ describe('Book-thing.io:', () => {
         .then(_res => {
           let res = _res;
           res.body.forEach((book, index) => {
-            book.id.should.be.an('number');
+            book.id.should.be.a('number');
             book.author.should.be.equal(newItem.author);
             book.summary.should.be.equal(newItem.summary);
             book.title.should.be.equal(newItem.title);
@@ -88,4 +88,33 @@ describe('Book-thing.io:', () => {
         });
     });
   });
+
+  describe("POST endpoint", () => {
+    it('should add a book to the database', () => {
+      const newItem = {
+        title: 'Test title',
+        author: 'test author',
+        summary: 'test description'
+      };
+      return chai.request(app)
+      .post('/api/library')
+      .send(newItem)
+      .then(res => {
+        res.should.have.status(201);
+        return knex('books')
+          .where({
+            title: newItem.title,
+            author: newItem.author,
+            summary: newItem.summary
+          })
+      })
+      .then(_res => {
+        let book = _res[0];
+        book.should.have.property('id').which.is.a('number');
+        book.title.should.be.equal(newItem.title);
+        book.author.should.be.equal(newItem.author);
+        book.summary.should.be.equal(newItem.summary);
+      })
+    })
+  })
 });
