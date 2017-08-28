@@ -26,7 +26,9 @@ export default class Home extends React.Component {
               <h1>
                 The Ultimate Book<br />Recommendation Engine
               </h1>
-              <button>Get Started</button>
+              <Link to="/library">
+                <button>Get Started</button>
+              </Link>
             </div>
           </section>
         </header>
