@@ -45,7 +45,7 @@ app.post("/api/library", (req, res) => {
     })
     .catch(error => {
       res.status(500);
-      console.error("INternal server error", error);
+      console.error("Internal server error", error);
     })
 })
 
