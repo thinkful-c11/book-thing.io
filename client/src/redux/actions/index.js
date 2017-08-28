@@ -22,14 +22,14 @@ export const fetchLibrary = () => dispatch => {
 };
 
 export const createBook = (book) => dispatch => {
-  return fetch('/api/library'.{
+  return fetch('/api/library', {
     method: 'post',
     body: JSON.stringify(book),
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }
-  }).then(book = <{
+  }).then(book => {
     dispatch(setBook(book));
   }).catch(err => {
     console.error(err);
