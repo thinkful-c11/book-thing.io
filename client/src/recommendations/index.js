@@ -7,23 +7,23 @@ class Recommendations extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     const newBook = {
-      Title: this.title.value,
-      Author: this.author.value,
-      Summary: this.summary.value
+      title: this.title.value,
+      author: this.author.value,
+      summary: this.summary.value
     }
-    this.props.dispatch(actions.setBook(newBook));
+    this.props.dispatch(actions.createBook(newBook));
+    this.props.dispatch(actions.fetchLibrary());
   }
 
   render() {
-    console.log(this.props);
-    // const myBooks = this.props.myBooks.map((mybooks, index) => {
-    //   return (
-    //     <li key={myBooks.id}>
-    //       Title: {myBooks.title}
-    //     </li>
-    //   )
-    // });
-
+    console.log("Look at me", this.props.myBooks);
+    const books = this.props.myBooks.map((book, index) => {
+      return (
+        <li key={book.id}>
+          Title: {book.title}
+        </li>
+      );
+    });
     return (
       <div>
         <h1>
@@ -38,7 +38,7 @@ class Recommendations extends React.Component {
             <button type="button" value="submit" onClick={(event) => this.handleSubmit(event)}>Submit</button>
           </form>
           <ul>
-            {/* {myBooks} */}
+            {books}
           </ul>
 
         </section>
@@ -55,5 +55,5 @@ class Recommendations extends React.Component {
   }
 }
 
-const mapStateToProps = (state) => ({myBooks: state.myLibrary});
+const mapStateToProps = (state) => ({myBooks: state.library});
 export default connect(mapStateToProps)(Recommendations);
