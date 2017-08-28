@@ -6,23 +6,23 @@ class Recommendations extends React.Component {
 
   handleSubmit() {
     event.preventDefault();
-    const newBook {
-      Title : this.title,
-      Author : this.author,
-      Summary : this.summary
+    const newBook = {
+      Title: this.title,
+      Author: this.author,
+      Summary: this.summary
     }
     this.props.dispatch(actions.setBook(newBook));
   }
 
   render() {
 
-    // const myBooks = this.props.myBooks.map((mybooks, index) => {
-    //   return (
-    //     <li key={myBook.id}>
-    //       Title: {myBook.title}
-    //     </li>
-    //   )
-    // });
+    const myBooks = this.props.myBooks.map((mybooks, index) => {
+      return (
+        <li key={myBook.id}>
+          Title: {myBook.title}
+        </li>
+      )
+    });
 
     return (
       <div>
@@ -37,9 +37,9 @@ class Recommendations extends React.Component {
             <textarea name="Summary" placeholder="Summary" ref={(summary) => this.summary = summary.value}/>
             <button type="button" value="submit" onClick={() => this.handleSubmit()}>Submit</button>
           </form>
-          {/* <ul>
+          <ul>
             {myBooks}
-          </ul> */}
+          </ul>
 
         </section>
         <section>
@@ -55,5 +55,5 @@ class Recommendations extends React.Component {
   }
 }
 
-// const mapStateToProps = (state) => ({myBooks: state.myLibrary});
-// export default connect(mapStateToProps)(Recommendations);
+const mapStateToProps = (state) => ({myBooks: state.myLibrary});
+export default connect(mapStateToProps)(Recommendations);
