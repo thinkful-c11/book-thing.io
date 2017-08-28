@@ -4,8 +4,7 @@ import * as actions from "../actions";
 const initialState = {
   testing: false,
   library: [],
-  success: false,
-  myLibrary: []
+  success: false
 };
 
 export const reducer = (state = initialState, action) => {
@@ -19,11 +18,6 @@ export const reducer = (state = initialState, action) => {
         library: action.books,
         success: true
       });
-    case actions.SET_BOOK:
-      return Object.assign({}, state, {
-        myLibrary: action.book,
-        success: true
-      })
     default:
       return state;
   }

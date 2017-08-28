@@ -4,9 +4,6 @@ export const testing = () => ({type: TESTING});
 export const SET_LIBRARY = "SET_LIBRARY";
 export const setLibrary = books => ({type: SET_LIBRARY, books});
 
-export const SET_BOOK = "SET_BOOK";
-export const setBook = book => ({type: SET_BOOK, book});
-
 export const fetchLibrary = () => dispatch => {
   return fetch("/api/library").then(response => {
     if (!response.ok) {
@@ -21,16 +18,16 @@ export const fetchLibrary = () => dispatch => {
   });
 };
 
-export const createBook = (book) => dispatch => {
+export const createBook = (books) => dispatch => {
   return fetch('/api/library', {
     method: 'post',
-    body: JSON.stringify(book),
+    body: JSON.stringify(books),
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     }
   }).then(book => {
-    dispatch(setBook(book));
+    dispatch(setLibrary(books));
   }).catch(err => {
     console.error(err);
   });
