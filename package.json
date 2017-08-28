@@ -9,6 +9,9 @@
     "dev": "run-p dev:server dev:client start",
     "dev:client": "cd client && cross-env BROWSER=none npm start -- --color=always | xp http://localhost:3000/ http://localhost:8080/",
     "dev:server": "cd server && npm start",
+    "test": "run-p test:server test:client",
+    "test:server": "cd server && npm test",
+    "test:client": "cd client && npm test",
     "install": "run-s install:server install:client",
     "install:server": "cd server && npm install",
     "install:client": "cd client && npm install"
