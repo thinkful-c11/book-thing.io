@@ -1,8 +1,15 @@
 import React, { Component } from "react";
 import logo from "./logo.svg";
-import { fetchLibrary } from "./redux/actions";
 import store from "./redux";
 import "./App.css";
+import { Route } from "react-router-dom";
+
+//actions
+import { fetchLibrary } from "./redux/actions";
+
+//components
+import Library from "./library";
+import Home from "./home";
 
 class App extends Component {
   // componentDidMount() {
@@ -12,15 +19,10 @@ class App extends Component {
 
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React bros</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-      </div>
+      <section>
+        <Route exact path="/" component={Home} />
+        <Route path="/library" component={Library} />
+      </section>
     );
   }
 }
