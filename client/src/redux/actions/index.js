@@ -10,7 +10,7 @@ export const setLibrary = books => ({
 });
 
 export const fetchLibrary = () => dispatch => {
-  return fetch("http://localhost:8080/api/library" ) 
+  return fetch("http://localhost:8080/api/library")
     .then(response => {
       console.log(response);
       if (!response.ok) {
@@ -27,7 +27,6 @@ export const fetchLibrary = () => dispatch => {
       console.error(err);
     });
 };
-
 
 // {
 //   method: 'GET',

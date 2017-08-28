@@ -5,10 +5,10 @@ import store from "./redux";
 import "./App.css";
 
 class App extends Component {
-  componentDidMount() {
-    console.log("hello");
-    store.dispatch(fetchLibrary());
-  }
+  // componentDidMount() {
+  //   console.log("hello");
+  //   store.dispatch(fetchLibrary());
+  // }
 
   render() {
     return (
