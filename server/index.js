@@ -76,7 +76,7 @@ const closeServer = () => {
     return new Promise((resolve, reject) => {
       server.close(err => {
         if (err) {
-          return reject(err);
+          return reject(err); //
         }
         resolve();
       });
@@ -85,9 +85,9 @@ const closeServer = () => {
 };
 
 if (require.main === module) {
-  runServer().catch(err => {
+  runServer().catch(err => { //
     console.error(`Can't start server: ${err}`);
-    throw err;
+    throw err; //
   });
 }
 module.exports = { app, runServer, closeServer };

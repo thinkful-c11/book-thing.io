@@ -7,6 +7,7 @@ const {TEST_DATABASE} = require('../config');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
+
 describe('Book-thing.io:', () => {
 
   before(() => runServer(undefined, TEST_DATABASE));
@@ -17,7 +18,7 @@ describe('Book-thing.io:', () => {
   });
 
   beforeEach(() => {
-  return knex('books')
+    return knex('books')
     .del()
     .catch((err) => {
       console.error('ERROR', err.message);
@@ -33,7 +34,7 @@ describe('Book-thing.io:', () => {
       });
   });
 
-  describe("GET endpoint", () => {
+  describe('GET endpoint', () => {
     it('should return a status of 200', () => {
       let res;
       return chai.request(app)
@@ -89,7 +90,7 @@ describe('Book-thing.io:', () => {
     });
   });
 
-  describe("POST endpoint", () => {
+  describe('POST endpoint', () => {
     it('should add a book to the database', () => {
       const newItem = {
         title: 'Test title',
@@ -106,7 +107,7 @@ describe('Book-thing.io:', () => {
             title: newItem.title,
             author: newItem.author,
             summary: newItem.summary
-          })
+          });
       })
       .then(_res => {
         let book = _res[0];
@@ -114,7 +115,18 @@ describe('Book-thing.io:', () => {
         book.title.should.be.equal(newItem.title);
         book.author.should.be.equal(newItem.author);
         book.summary.should.be.equal(newItem.summary);
-      })
-    })
-  })
+      });
+    });
+  });
+
+});
+
+xdescribe('Testing server functions', () => {
+
+  describe('Error handling', () => {
+    it('should reject Promise upon error', () =>{
+      
+        
+    });
+  });
 });
