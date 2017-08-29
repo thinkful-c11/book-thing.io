@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { TEST_DATABASE, PORT } = require("./config");
 const BearerStrategy = require("passport-http-bearer").Strategy;
 let Strategy;
@@ -8,29 +9,37 @@ const passport = require("passport");
 
 const app = express();
 
+let secret = {
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRET: process.env.CLIENT_SECRET
+}
+
+if (process.env.NODE_ENV !== 'production') {
+  secret = require('./secret');
+}
+
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 app.use(parser.json());
 
 app.use(passport.initialize());
 
-if (process.env.NODE_ENV == 'test') {
-  Streategy = require('passport-mock').Strategy;
-} else {
-  Strategy = require('passport-google-oath20').Strategy;
-}
+// if (process.env.NODE_ENV == 'test') {
+//   Strategy = require('passport-mock').Strategy;
+// } else {
+//   Strategy = require('passport-google-oauth20').Strategy;
+// }
 
 passport.use(
-  new Strategy({
+  new GoogleStrategy({
     clientID: secret.CLIENT_ID,
     clientSecret: secret.CLIENT_SECRET,
     callbackURL: '/api/auth/google/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
+    console.log('Hello!');
     let user;
-    knex
-      .select()
-      .from("users")
-      .where("userID", "=", profile.id)
+    knex("users")
+      .where("userID", profile.id)
       .then(_user => {
         user = _user;
         if(!user) {
@@ -82,6 +91,18 @@ app.use(function(req, res, next) {
   );
   next();
 });
+//
+app.get("/api/auth/google", passport.authenticate('google', {scope: ['profile']}));
+
+app.get("/api/auth/google/callback",
+  passport.authenticate('google', {
+    failureRedirect: '/',
+    session: false
+  }),
+  (req, res) => {
+    res.cookie('accessToken', req.user.accessToken, {expires: 0});
+    res.redirect('/');
+  });
 
 app.get("/api/library",
   (req, res) => {
