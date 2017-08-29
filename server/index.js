@@ -1,12 +1,72 @@
 const express = require("express");
 const path = require("path");
 const { TEST_DATABASE, PORT } = require("./config");
+const BearerStrategy = require("passport-http-bearer").Strategy;
+let Strategy;
 const parser = require("body-parser");
+const passport = require("passport");
 
 const app = express();
 
 app.use(express.static(path.resolve(__dirname, "../client/build")));
 app.use(parser.json());
+
+app.use(passport.initialize());
+
+if (process.env.NODE_ENV == 'test') {
+  Streategy = require('passport-mock').Strategy;
+} else {
+  Strategy = require('passport-google-oath20').Strategy;
+}
+
+passport.use(
+  new Strategy({
+    clientID: secret.CLIENT_ID,
+    clientSecret: secret.CLIENT_SECRET,
+    callbackURL: '/api/auth/google/callback'
+  },
+  (accessToken, refreshToken, profile, cb) => {
+    let user;
+    knex
+      .select()
+      .from("users")
+      .where("userID", "=", profile.id)
+      .then(_user => {
+        user = _user;
+        if(!user) {
+          return knex("users")
+            .insert({
+              userID: profile.id,
+              firstName: profile.name.givenName,
+              lastName: profile.name.lastName,
+              accessToken: accessToken
+            });
+        }
+        return knex("users")
+               .where("userID", "=", user.userID)
+               .update({
+                 accessToken: accessToken
+               });
+      })
+      .then(user => {
+        return cb(null, user);
+      })
+  }
+));
+
+passport.use(
+  new BearerStrategy((token, done) => {
+    knex("users")
+    .where("accessToken", "=", token)
+    .then(_user => {
+      if (!user) {
+        return done(null, false);
+      }
+      return done(null, user[0]);
+    })
+    .catch(err => console.log(err))
+  })
+)
 
 app.use(function (req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -23,7 +83,8 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.get("/api/library", (req, res) => {
+app.get("/api/library",
+  (req, res) => {
   knex
     .select("*")
     .from("books")
@@ -45,7 +106,7 @@ app.post("/api/library", (req, res) => {
     })
     .catch(error => {
       res.status(500);
-      console.error("INternal server error", error);
+      console.error("Internal server error", error);
     })
 })
 

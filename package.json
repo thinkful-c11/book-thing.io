@@ -21,8 +21,8 @@
     "server/node_modules",
     "client/node_modules"
   ],
-  "author": "Joe Turner <jturner@thinkful.com>",
-  "license": "MIT",
+  "author": "",
+  "license": "",
   "dependencies": {
     "cross-env": "^3.1.4",
     "express": "^4.14.1",
