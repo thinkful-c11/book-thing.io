@@ -37,27 +37,32 @@ passport.use(
   },
   (accessToken, refreshToken, profile, cb) => {
     console.log('Hello!');
+    console.log(profile.name);
     let user;
     knex("users")
-      .where("userID", profile.id)
+      .where("userid", profile.id)
       .then(_user => {
-        user = _user;
+        user = _user[0];
+        console.log("user", user);
         if(!user) {
           return knex("users")
             .insert({
-              userID: profile.id,
-              firstName: profile.name.givenName,
-              lastName: profile.name.lastName,
-              accessToken: accessToken
+              userid: profile.id,
+              firstname: profile.name.givenName,
+              lastname: profile.name.familyName,
+              accesstoken: accessToken
             });
+        }else {
+          console.log("why?");
+          return knex("users")
+                 .where("userid", user.userid)
+                 .update({
+                   accesstoken: accessToken
+                 });
         }
-        return knex("users")
-               .where("userID", "=", user.userID)
-               .update({
-                 accessToken: accessToken
-               });
       })
       .then(user => {
+        console.log(user);
         return cb(null, user);
       })
   }
