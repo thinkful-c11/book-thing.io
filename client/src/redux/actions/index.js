@@ -30,10 +30,3 @@ export const createBook = (books) => dispatch => {
     console.error(err);
   });
 };
-
-// {
-//   method: 'GET',
-//   headers: new Headers({
-//     'Access-Control-Allow-Origin': '*'
-//   })
-//   }
