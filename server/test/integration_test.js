@@ -1,6 +1,8 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
+const expect = chai.expect;
+process.env.NODE_ENV = 'test';
 // const assert = chai.assert();
 const {app, runServer, closeServer} = require('../index');
 const {TEST_DATABASE} = require('../config');
@@ -34,8 +36,8 @@ describe('Book-thing.io:', () => {
       });
   });
 
-  describe('GET endpoint', () => {
-    it('should return a status of 200', () => {
+  describe('GET endpoints', () => {
+    xit('should return a status of 200', () => {
       let res;
       return chai.request(app)
              .get('/api/library')
@@ -45,7 +47,7 @@ describe('Book-thing.io:', () => {
              });
     });
 
-    it('should return books with correct fields', () => {
+    xit('should return books with correct fields', () => {
       let res;
       const newItem = {
         title: 'Test title',
@@ -66,7 +68,7 @@ describe('Book-thing.io:', () => {
         });
     });
 
-    it('should draw the data from a database', () => {
+    xit('should draw the data from a database', () => {
       const newItem = {
         title: 'Test title',
         author: 'test author',
@@ -88,10 +90,21 @@ describe('Book-thing.io:', () => {
           });
         });
     });
+
+    it('should do something', done => {
+       chai.request(app)
+      .get('/api/auth/google').redirects(0)
+      .end((err, res) => {
+        let location = res.headers['location'].split("?")[0];
+        location.should.equal(`https://accounts.google.com/o/oauth2/v2/auth`)
+        // expect(res.headers['location']).to.match(/^https:\/\/accounts.google.com\/o\/oath2/);
+        done();
+      })
+    })
   });
 
   describe('POST endpoint', () => {
-    it('should add a book to the database', () => {
+    xit('should add a book to the database', () => {
       const newItem = {
         title: 'Test title',
         author: 'test author',
@@ -125,8 +138,8 @@ xdescribe('Testing server functions', () => {
 
   describe('Error handling', () => {
     it('should reject Promise upon error', () =>{
-      
-        
+
+
     });
   });
 });
