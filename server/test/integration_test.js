@@ -91,7 +91,7 @@ describe('Book-thing.io:', () => {
         });
     });
 
-    it('should do something', done => {
+    it('should redirect to google authentication', done => {
        chai.request(app)
       .get('/api/auth/google').redirects(0)
       .end((err, res) => {
