@@ -24,7 +24,7 @@ it("renders without crashing", () => {
   </Provider>, div);
 });
 
-it("dispatches createBook from handleSubmit", () => {
+xit("dispatches createBook from handleSubmit", () => {
   const book = {
     title: "title",
     author: "author",
