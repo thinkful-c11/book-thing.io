@@ -3,7 +3,7 @@ const path = require("path");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { TEST_DATABASE, PORT } = require("./config");
 const BearerStrategy = require("passport-http-bearer").Strategy;
-let Strategy;
+// let Strategy;
 const parser = require("body-parser");
 const passport = require("passport");
 
@@ -18,7 +18,7 @@ if (process.env.NODE_ENV !== 'production') {
   secret = require('./secret');
 }
 
-app.use(express.static(path.resolve(__dirname, "../client/build")));
+
 app.use(parser.json());
 
 app.use(passport.initialize());
@@ -36,14 +36,11 @@ passport.use(
     callbackURL: '/api/auth/google/callback'
   },
   (accessToken, refreshToken, profile, cb) => {
-    console.log('Hello!');
-    console.log(profile.name);
     let user;
     knex("users")
       .where("userid", profile.id)
       .then(_user => {
         user = _user[0];
-        console.log("user", user);
         if(!user) {
           return knex("users")
             .insert({
@@ -53,7 +50,6 @@ passport.use(
               accesstoken: accessToken
             });
         }else {
-          console.log("why?");
           return knex("users")
                  .where("userid", user.userid)
                  .update({
@@ -62,7 +58,6 @@ passport.use(
         }
       })
       .then(user => {
-        console.log(user);
         return cb(null, user);
       })
   }
@@ -71,7 +66,7 @@ passport.use(
 passport.use(
   new BearerStrategy((token, done) => {
     knex("users")
-    .where("accessToken", "=", token)
+    .where("accesstoken", token)
     .then(_user => {
       if (!user) {
         return done(null, false);
@@ -96,7 +91,7 @@ app.use(function(req, res, next) {
   );
   next();
 });
-//
+
 app.get("/api/auth/google", passport.authenticate('google', {scope: ['profile']}));
 
 app.get("/api/auth/google/callback",
@@ -123,6 +118,12 @@ app.get("/api/library",
     });
 });
 
+app.get("/api/auth/logout", (req, res) => {
+    req.logout();
+    res.clearCookie('accesstoken');
+    res.redirect('/');
+});
+
 app.post("/api/library", (req, res) => {
   return knex("books")
     .insert(req.body)
@@ -135,6 +136,8 @@ app.post("/api/library", (req, res) => {
       console.error("Internal server error", error);
     })
 })
+
+app.use(express.static(path.resolve(__dirname, "../client/build")));
 
 app.get(/^(?!\/api(\/|$))/, (req, res) => {
   const index = path.resolve(__dirname, "../client/build", "index.html");
