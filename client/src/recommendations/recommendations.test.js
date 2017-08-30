@@ -5,16 +5,9 @@ import store from "../redux";
 import {shallow} from "enzyme";
 import * as actions from "../redux/actions"
 import Recommendations from './index.js';
+const sinon = require('sinon');
 
 //mock async createBook action
-const mockCreateBookAction = (book) => {
-  type : 'CREATE_BOOK',
-  book
-};
-
-jest.mock('../redux/actions', () => Object.assign({}, require.requireActual('../redux/actions'), {createBook: jest.fn().mockImplementation(() => {
-    return mockCreateBookAction;
-  })}));
 
 it("renders without crashing", () => {
   const div = document.createElement("div");
@@ -24,7 +17,7 @@ it("renders without crashing", () => {
   </Provider>, div);
 });
 
-xit("dispatches createBook from handleSubmit", () => {
+it("dispatches createBook from handleSubmit", () => {
   const book = {
     title: "title",
     author: "author",
@@ -32,10 +25,29 @@ xit("dispatches createBook from handleSubmit", () => {
   };
 
   const dispatch = jest.fn();
-  shallow(
+  const buttonClick = sinon.spy();
+  const wrapper = shallow(
     <Provider store={store}>
       <Recommendations book={book} dispatch={dispatch}/>
     </Provider>
   );
-  expect(dispatch).toHaveBeenCalledWith(mockCreateBookAction(book));
+  wrapper.find('#title').simulate('keypress', {
+    target: {
+      value: "title"
+    }
+  });
+  wrapper.find('#author').simulate('keypress', {
+    target: {
+      value: "author"
+    }
+  });
+  wrapper.find('#summary').simulate('keypress', {
+    target: {
+      value: "summary"
+    }
+  });
+  wrapper.find('#button').simulate('click');
+  expect(buttonClick.calledOnce).to.equal(true);
 });
+
+//store.getState()

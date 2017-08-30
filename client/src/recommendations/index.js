@@ -32,10 +32,10 @@ class Recommendations extends React.Component {
         <section>
           Your Books
           <form>
-            <input type="text" name="Title" placeholder="Title" ref={title => this.title = title}/>
-            <input type="text" name="Author" placeholder="Author" ref={author => this.author = author}/>
-            <textarea name="Summary" placeholder="Summary" ref={summary => this.summary = summary}/>
-            <button type="button" value="submit" onClick={(event) => this.handleSubmit(event)}>Submit</button>
+            <input id="title" type="text" name="Title" placeholder="Title" ref={title => this.title = title}/>
+            <input id="author" type="text" name="Author" placeholder="Author" ref={author => this.author = author}/>
+            <textarea id="summary" name="Summary" placeholder="Summary" ref={summary => this.summary = summary}/>
+            <button id="button" type="button" value="submit" onClick={(event) => this.handleSubmit(event)}>Submit</button>
           </form>
           <ul>
             {books}
