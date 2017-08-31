@@ -3,7 +3,6 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 const expect = chai.expect;
 process.env.NODE_ENV = 'test';
-// const assert = chai.assert();
 const {app, runServer, closeServer} = require('../index');
 const {TEST_DATABASE} = require('../config');
 const knex = require('knex')(TEST_DATABASE);
@@ -110,9 +109,9 @@ describe('Book-thing.io:', () => {
             let res = _res;
             let book = res.body[res.body.length-1];
             book.id.should.be.a('number');
-            book.author.should.be.equal(newItem.author);
-            book.summary.should.be.equal(newItem.summary);
-            book.title.should.be.equal(newItem.title);
+            book.author.should.be.equal(newBook.author);
+            book.summary.should.be.equal(newBook.summary);
+            book.title.should.be.equal(newBook.title);
           });
       });
     })
