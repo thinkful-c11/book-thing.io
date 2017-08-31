@@ -66,6 +66,7 @@ describe('Book-thing.io:', () => {
         let res;
         return chai.request(app)
                .get('/api/library')
+               .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
                .then(_res => {
                  res = _res;
                  res.should.have.status(200);
@@ -92,7 +93,7 @@ describe('Book-thing.io:', () => {
           });
       });
 
-      it('should draw the data from a database', () => {
+      xit('should draw the data from a database', () => {
         const newBook = {
           title: 'Test title',
           author: 'test author',
@@ -140,6 +141,22 @@ describe('Book-thing.io:', () => {
           });
       });
     });
+
+  //   describe('/api/me', () => {
+  //     it ('should return the current user', () => {
+  //       return chai.request(app)
+  //         .get('/api/me')
+  //         .send({
+  //           userid: 43214,
+  //           firstname: 'Jimmy',
+  //           lastname: 'BlueJeans',
+  //           accesstoken: '1927goiugrlkjsghfd87g23'
+  //         })
+  //         .then(user => {
+  //           console.log(user);
+  //         })
+  //     })
+  //   })
   });
 
   xdescribe('POST endpoint', () => {
