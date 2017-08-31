@@ -48,17 +48,19 @@ passport.use(
               firstname: profile.name.givenName,
               lastname: profile.name.familyName,
               accesstoken: accessToken
-            });
+            })
+            .returning('*');
         }else {
           return knex("users")
                  .where("userid", user.userid)
                  .update({
                    accesstoken: accessToken
-                 });
+                 })
+                 .returning('*');
         }
       })
       .then(user => {
-        return cb(null, user);
+        return cb(null, user[0]);
       })
   }
 ));
@@ -105,7 +107,15 @@ app.get("/api/auth/google/callback",
     res.redirect('/');
   });
 
+app.get('/api/me',
+  passport.authenticate('bearer', {session: false}),
+ (req, res) => {
+  console.log(req.user);
+  res.json(req.user);
+})
+
 app.get("/api/library",
+  passport.authenticate('bearer', {session: false}),
   (req, res) => {
   knex
     .select("*")
@@ -125,7 +135,9 @@ app.get("/api/auth/logout", (req, res) => {
     res.redirect('/');
 });
 
-app.post("/api/library", (req, res) => {
+app.post("/api/library",
+  passport.authenticate('bearer', {session: false}),
+ (req, res) => {
   return knex("books")
     .insert(req.body)
     .returning('id')
