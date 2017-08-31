@@ -1,6 +1,6 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
 import "./App.css";
-import { Route } from "react-router-dom";
+import {Route} from "react-router-dom";
 
 //components
 import Recommendations from "./recommendations";
@@ -16,12 +16,13 @@ class App extends Component {
   render() {
     return (
       <section>
-        <Route exact path="/" component={Home} />
-        <Route path="/library" component={Library} />
-        <Route path="/recommendations" component={Recommendations} />
+        <Route exact path="/" component={Home}/>
+        <Route path="/library" component={Library}/>
+        <Route path="/recommendations" component={Recommendations}/>
       </section>
     );
   }
+
 }
 
 export default App;
