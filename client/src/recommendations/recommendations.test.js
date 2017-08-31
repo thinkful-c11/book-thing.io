@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import {Provider} from "react-redux";
 import store from "../redux";
-import {shallow} from "enzyme";
+import {shallow, mount} from "enzyme";
 import * as actions from "../redux/actions"
 import Recommendations from './index.js';
 const sinon = require('sinon');
@@ -24,30 +24,28 @@ it("dispatches createBook from handleSubmit", () => {
     summary: "summary"
   };
 
-  const dispatch = jest.fn();
   const buttonClick = sinon.spy();
-  const wrapper = shallow(
+  const dispatch = jest.fn();
+  const wrapper = mount(
     <Provider store={store}>
       <Recommendations book={book} dispatch={dispatch}/>
     </Provider>
   );
-  wrapper.find('#title').simulate('keypress', {
+  wrapper.find("input.title").simulate('keypress', {
     target: {
-      value: "title"
+      value: book.title
     }
   });
-  wrapper.find('#author').simulate('keypress', {
+  wrapper.find("input.author").simulate('keypress', {
     target: {
-      value: "author"
+      value: book.author
     }
   });
-  wrapper.find('#summary').simulate('keypress', {
+  wrapper.find("textarea.summary").simulate('keypress', {
     target: {
-      value: "summary"
+      value: book.summary
     }
   });
-  wrapper.find('#button').simulate('click');
-  expect(buttonClick.calledOnce).to.equal(true);
+  wrapper.find("button.submitBook").simulate('click');
+  //add an assert to check book in created in state
 });
-
-//store.getState()
