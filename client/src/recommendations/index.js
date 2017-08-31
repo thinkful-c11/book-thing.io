@@ -16,7 +16,6 @@ class Recommendations extends React.Component {
   }
 
   render() {
-    console.log("Look at me", this.props.myBooks);
     const books = this.props.myBooks.map((book, index) => {
       return (
         <li key={book.id}>
@@ -32,10 +31,10 @@ class Recommendations extends React.Component {
         <section>
           Your Books
           <form>
-            <input type="text" name="Title" placeholder="Title" ref={title => this.title = title}/>
-            <input type="text" name="Author" placeholder="Author" ref={author => this.author = author}/>
-            <textarea name="Summary" placeholder="Summary" ref={summary => this.summary = summary}/>
-            <button type="button" value="submit" onClick={(event) => this.handleSubmit(event)}>Submit</button>
+            <input className="title" type="text" name="Title" placeholder="Title" ref={title => this.title = title}/>
+            <input className="author" type="text" name="Author" placeholder="Author" ref={author => this.author = author}/>
+            <textarea className="summary" name="Summary" placeholder="Summary" ref={summary => this.summary = summary}/>
+            <button className="submitBook" type="button" value="submit" onClick={(event) => this.handleSubmit(event)}>Submit</button>
           </form>
           <ul>
             {books}
