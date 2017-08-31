@@ -23,12 +23,12 @@ const seedBookData = () => {
 
 const seedUserData = () => {
   console.info('seeding user data');
-  return knex("users")
+  return knex('users')
     .insert({
       userid: 43214,
       firstname: 'Jimmy',
       lastname: 'BlueJeans',
-      accesstoken: '1927goiugrlkjsghfd87g23'
+      accesstoken: `1927goiugrlkjsghfd87g23`
     });
 }
 describe('Book-thing.io:', () => {
@@ -66,7 +66,7 @@ describe('Book-thing.io:', () => {
         let res;
         return chai.request(app)
                .get('/api/library')
-               .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+               .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
                .then(_res => {
                  res = _res;
                  res.should.have.status(200);
