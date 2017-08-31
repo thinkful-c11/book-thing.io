@@ -8,11 +8,6 @@ import Library from "./library";
 import Home from "./home";
 
 class App extends Component {
-  // componentDidMount() {
-  //   console.log("hello");
-  //   store.dispatch(fetchLibrary());
-  // }
-
   render() {
     return (
       <section>
