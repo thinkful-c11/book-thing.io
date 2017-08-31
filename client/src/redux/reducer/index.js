@@ -10,7 +10,9 @@ const initialState = {
 export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case actions.TESTING:
-      return Object.assign({}, state, { testing: !state.testing });
+      return Object.assign({}, state, {
+        testing: !state.testing
+      });
     case actions.SET_LIBRARY:
       return Object.assign({}, state, {
         library: action.books,
