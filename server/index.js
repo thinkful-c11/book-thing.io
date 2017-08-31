@@ -102,15 +102,18 @@ app.get("/api/auth/google/callback",
     session: false
   }),
   (req, res) => {
-    res.cookie('accessToken', req.user.accessToken, {expires: 0});
+    res.cookie('accessToken', req.user.accesstoken, {expires: 0});
     res.redirect('/');
   });
 
 app.get('/api/me',
   passport.authenticate('bearer', {session: false}),
  (req, res) => {
-  console.log(req.user);
-  res.json(req.user);
+  res.json({id: req.user.id,
+            userid: req.user.userid,
+            firstname: req.user.firstname,
+            lastname: req.user.lastname,
+            });
 })
 
 app.get("/api/library",
