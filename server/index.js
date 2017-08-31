@@ -18,10 +18,10 @@ if (process.env.NODE_ENV !== 'production') {
   secret = require('./secret');
 }
 
-
+app.use(passport.initialize());
 app.use(parser.json());
 
-app.use(passport.initialize());
+
 
 // if (process.env.NODE_ENV == 'test') {
 //   Strategy = require('passport-mock').Strategy;
@@ -67,13 +67,14 @@ passport.use(
 
 passport.use(
   new BearerStrategy((token, done) => {
-    knex("users")
-    .where("accesstoken", token)
+    return knex('users')
+    .where('accesstoken', token)
     .then(_user => {
+      let user = _user[0];
       if (!user) {
         return done(null, false);
       }
-      return done(null, user[0]);
+      return done(null, user);
     })
     .catch(err => console.log(err))
   })
@@ -106,7 +107,7 @@ app.get("/api/auth/google/callback",
     res.redirect('/');
   });
 
-app.get('/api/me',
+app.get("/api/me",
   passport.authenticate('bearer', {session: false}),
  (req, res) => {
   res.json({id: req.user.id,
@@ -116,19 +117,18 @@ app.get('/api/me',
             });
 })
 
-app.get("/api/library",
-  passport.authenticate('bearer', {session: false}),
-  (req, res) => {
-  knex
-    .select("*")
-    .from("books")
-    .then(results => {
-      res.json(results);
-    })
-    .catch(error => {
-      res.status(500);
-      console.error("Internal server error", error);
-    });
+app.get("/api/library",   passport.authenticate('bearer', {session: false}), (req, res) => {
+    console.log("Are we here?");
+    return knex
+      .select("*")
+      .from("books")
+      .then(results => {
+        res.json(results);
+      })
+      .catch(error => {
+        res.status(500);
+        console.error("Internal server error", error);
+      });
 });
 
 app.get("/api/auth/logout", (req, res) => {
