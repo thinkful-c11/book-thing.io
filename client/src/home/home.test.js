@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import {MemoryRouter} from "react-router-dom";
 import {Provider} from "react-redux";
 import {shallow, mount} from "enzyme";
+import * as Cookies from "js-cookie";
 import store from "../redux";
 import Home from "./index.js";
 
@@ -30,16 +31,24 @@ it("changes loggedIn prop from false to true", () => {
   expect(wrapper.props().loggedIn).toEqual('true');
 });
 
-xit("logs out and clears cookies", () => {
+it("logs out and clears cookies", () => {
   const wrapper = mount(
     <Provider store={store}>
       <MemoryRouter>
-        <Home loggedIn='true'/>
+        <Home user={{
+          loggedIn: true
+        }}/>
       </MemoryRouter>
     </Provider>
   );
+  Cookies.set('accessToken', '12345');
   wrapper.find('.logout').simulate('click');
-  wrapper.setProps({loggedIn: 'false'});
-  console.log("props", wrapper.props().loggedIn);
-  expect(wrapper.props().loggedIn).toEqual('false');
+  expect(Cookies.get('accessToken')).toEqual('undefined');
+  wrapper.setProps({
+    user: {
+      loggedIn: false
+    }
+  });
+  console.log("props", wrapper.props().user);
+  // expect(wrapper.props().).toEqual('false');
 });

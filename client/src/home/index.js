@@ -12,21 +12,29 @@ import {connect} from "react-redux";
 import {fetchUser, logOutUser} from "../redux/actions";
 
 export class Home extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      loggedIn: false
+    }
+  }
   componentDidMount() {
     const accessToken = Cookies.get("accessToken");
     if (accessToken) {
+      this.setState({loggedIn: true});
       this.props.dispatch(fetchUser(accessToken));
     }
   }
 
   handleLogOut() {
     Cookies.remove("accessToken");
+    this.setState({loggedIn: false});
     this.props.dispatch(logOutUser());
   }
 
   render() {
     let userToggleLogin;
-    if (this.props.user.loggedIn) {
+    if (this.state.loggedIn) {
       userToggleLogin = (
         <a className="logout" onClick={() => this.handleLogOut()} href="/api/auth/logout">
           <p>Log out</p>
