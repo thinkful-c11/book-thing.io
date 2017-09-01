@@ -166,9 +166,9 @@ describe('Book-thing.io:', () => {
           .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
           .send()
           .then(res => {
+            let user = res.body;
             res.should.have.status(200);
             res.should.be.json;
-            let user = res.body;
             user.id.should.be.a('number');
             user.user_id.should.be.equal('43214');
             user.first_name.should.be.equal('Jimmy');
@@ -220,7 +220,6 @@ describe('Book-thing.io:', () => {
       })
     });
   });
-
 });
 
 xdescribe('Testing server functions', () => {
