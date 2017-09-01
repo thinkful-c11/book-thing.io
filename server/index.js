@@ -13,9 +13,9 @@ let secret = {
   CLIENT_SECRET: process.env.CLIENT_SECRET
 }
 
-if (process.env.NODE_ENV !== 'production') {
-  secret = require('./secret');
-}
+// if (process.env.NODE_ENV !== 'production') {
+//   secret = require('./secret');
+// }
 
 app.use(passport.initialize());
 app.use(parser.json());
