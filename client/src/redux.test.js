@@ -12,7 +12,7 @@ test("async action should fetch for the library and set it to state", function()
   fetch.mockResponse(JSON.stringify([
     {
       title: "book1",
-      summary: "the description of book1"
+      blurb: "the description of book1"
     }
   ]));
   const expectedActions = {
@@ -20,13 +20,13 @@ test("async action should fetch for the library and set it to state", function()
     books: [
       {
         title: "book1",
-        summary: "the description of book1"
+        blurb: "the description of book1"
       }
     ]
   };
   expect(store.getState().library).toHaveLength(0);
   return store.dispatch(actions.fetchLibrary()).then(() => {
-    console.log("actions", store.getActions()[0]);
+    console.log("actions", store.getActions());
     expect(store.getActions()[0]).toEqual(expectedActions);
   });
 });

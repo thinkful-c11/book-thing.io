@@ -1,6 +1,6 @@
 import React from "react";
 import * as actions from "../redux/actions";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 
 class Library extends React.Component {
   componentDidMount() {
@@ -11,9 +11,11 @@ class Library extends React.Component {
     const books = this.props.books.map((book, index) => {
       return (
         <li key={book.id}>
-          Title: {book.title} <br />
-          Author: {book.author} <br />
-          Summary: {book.summary}
+          Title: {book.title}
+          <br/>
+          Author: {book.author}
+          <br/>
+          Blurb: {book.blub}
         </li>
       );
     });
@@ -26,5 +28,5 @@ class Library extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({ books: state.library, user: state.user });
+const mapStateToProps = state => ({books: state.library, user: state.user});
 export default connect(mapStateToProps)(Library);

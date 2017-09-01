@@ -21,7 +21,7 @@ it("dispatches createBook from handleSubmit", () => {
   const book = {
     title: "title",
     author: "author",
-    summary: "summary"
+    blurb: "blurb"
   };
 
   const buttonClick = sinon.spy();
@@ -41,9 +41,9 @@ it("dispatches createBook from handleSubmit", () => {
       value: book.author
     }
   });
-  wrapper.find("textarea.summary").simulate('keypress', {
+  wrapper.find("textarea.blurb").simulate('keypress', {
     target: {
-      value: book.summary
+      value: book.blurb
     }
   });
   wrapper.find("button.submitBook").simulate('click');

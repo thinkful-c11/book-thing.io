@@ -1,6 +1,6 @@
 import React from "react";
 import * as actions from "../redux/actions";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 
 class Recommendations extends React.Component {
   handleSubmit(event) {
@@ -8,7 +8,7 @@ class Recommendations extends React.Component {
     const newBook = {
       title: this.title.value,
       author: this.author.value,
-      summary: this.summary.value
+      blurb: this.blurb.value
     };
     console.log(this.props.user.token);
     this.props.dispatch(actions.createBook(newBook, this.props.user.token));
@@ -25,32 +25,10 @@ class Recommendations extends React.Component {
         <section>
           Your Books
           <form>
-            <input
-              className="title"
-              type="text"
-              name="Title"
-              placeholder="Title"
-              ref={title => (this.title = title)}
-            />
-            <input
-              className="author"
-              type="text"
-              name="Author"
-              placeholder="Author"
-              ref={author => (this.author = author)}
-            />
-            <textarea
-              className="summary"
-              name="Summary"
-              placeholder="Summary"
-              ref={summary => (this.summary = summary)}
-            />
-            <button
-              className="submitBook"
-              type="button"
-              value="submit"
-              onClick={event => this.handleSubmit(event)}
-            >
+            <input className="title" type="text" name="Title" placeholder="Title" ref={title => (this.title = title)}/>
+            <input className="author" type="text" name="Author" placeholder="Author" ref={author => (this.author = author)}/>
+            <textarea className="blurb" name="Blurb" placeholder="Blurb" ref={blurb => (this.blurb = blurb)}/>
+            <button className="submitBook" type="button" value="submit" onClick={event => this.handleSubmit(event)}>
               Submit
             </button>
           </form>
@@ -58,16 +36,16 @@ class Recommendations extends React.Component {
         </section>
         <section>
           Top Recommendations for You
-          <ul />
+          <ul/>
         </section>
         <section>
           Try these
-          <ul />
+          <ul/>
         </section>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({ myBooks: state.library, user: state.user });
+const mapStateToProps = state => ({myBooks: state.library, user: state.user});
 export default connect(mapStateToProps)(Recommendations);
