@@ -76,12 +76,12 @@ describe('Book-thing.io:', () => {
       it('should return a status of 200', () => {
         let res;
         return chai.request(app)
-               .get('/api/library')
-               .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
-               .then(_res => {
-                 res = _res;
-                 res.should.have.status(200);
-               });
+          .get('/api/library')
+          .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
+          .then(_res => {
+            res = _res;
+            res.should.have.status(200);
+          });
       });
 
       it('should return books with correct fields', () => {
@@ -167,7 +167,7 @@ describe('Book-thing.io:', () => {
           .send()
           .then(res => {
             res.should.have.status(200);
-            res.should.be.json();
+            res.should.be.json;
             let user = res.body;
             user.id.should.be.a('number');
             user.user_id.should.be.equal('43214');
@@ -204,7 +204,6 @@ describe('Book-thing.io:', () => {
       .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
       .then(res => {
         res.should.have.status(201);
-        res.should.be.json();
         return knex('books')
           .where({
             title: newBook.title,
