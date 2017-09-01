@@ -22,6 +22,7 @@ export class Home extends React.Component {
     const accessToken = Cookies.get("accessToken");
     if (accessToken) {
       this.setState({loggedIn: true});
+      console.log("token", accessToken);
       this.props.dispatch(fetchUser(accessToken));
     }
   }
