@@ -60,8 +60,19 @@ describe('Book-thing.io:', () => {
       });
   });
 
-  xdescribe('GET endpoints', () => {
+  describe('GET endpoints', () => {
+
     describe('library', () => {
+
+      it('should return a status of 401 with wrong authentication', () => {
+        return chai.request(app)
+          .get('/api/library')
+          .catch(err => {
+            err.response.should.have.status(401);
+            err.response.text.should.equal('Unauthorized');
+          });
+      })
+
       it('should return a status of 200', () => {
         let res;
         return chai.request(app)
@@ -121,7 +132,7 @@ describe('Book-thing.io:', () => {
       });
     })
 
-    xdescribe('google authentication', () => {
+    describe('google authentication', () => {
       it('should redirect to google authentication', done => {
         chai.request(app)
           .get('/api/auth/google').redirects(0)
@@ -134,7 +145,7 @@ describe('Book-thing.io:', () => {
       });
     });
 
-    xdescribe('logout', () => {
+    describe('logout', () => {
       it('should end the session and show homepage', done => {
         chai.request(app)
           .get('/api/auth/logout').redirects(0)
@@ -147,59 +158,72 @@ describe('Book-thing.io:', () => {
       });
     });
 
-    // describe('/api/me', () => {
-    //   app.use((req, res, next) => {
-    //     req.user = {
-    //       userid: 43214,
-    //       firstname: 'Jimmy',
-    //       lastname: 'BlueJeans',
-    //       accesstoken: `1927goiugrlkjsghfd87g23`
-    //     };
-    //     next();
-    //   });
-    //   it ('should return the current user', () => {
-    //     return chai.request(app)
-    //       .get('/api/me')
-    //       .send({
-    //         userid: 43214,
-    //         firstname: 'Jimmy',
-    //         lastname: 'BlueJeans',
-    //         accesstoken: '1927goiugrlkjsghfd87g23'
-    //       })
-    //       .then(user => {
-    //         console.log(user);
-    //       })
-    //   })
-    // })
-  });
+  //   describe('/api/me', () => {
+  //     app.use((req, res, next) => {
+  //       req.user = {
+  //         userid: 43214,
+  //         firstname: 'Jimmy',
+  //         lastname: 'BlueJeans',
+  //         accesstoken: `1927goiugrlkjsghfd87g23`
+  //       };
+  //       next();
+  //     });
+  //     it ('should return the current user', () => {
+  //       return chai.request(app)
+  //         .get('/api/me')
+  //         .send({
+  //           userid: 43214,
+  //           firstname: 'Jimmy',
+  //           lastname: 'BlueJeans',
+  //           accesstoken: '1927goiugrlkjsghfd87g23'
+  //         })
+  //         .then(user => {
+  //           console.log(user);
+  //         })
+  //     })
+  //   })
+  // });
 
-  xdescribe('POST endpoint', () => {
+  describe('POST endpoint', () => {
+
+    const newBook = {
+      title: 'New Test title',
+      author: 'New test author',
+      summary: 'New test description'
+    };
+
+    it('should return a status of 401 when incorrect login info is provided', () => {
+      return chai.request(app)
+        .post('/api/library')
+        .send(newBook)
+        .catch(err => {
+          err.response.should.have.status(401);
+          err.response.text.should.equal('Unauthorized');
+        })
+    });
+
     it('should add a book to the database', () => {
-      const newItem = {
-        title: 'Test title',
-        author: 'test author',
-        summary: 'test description'
-      };
+
       return chai.request(app)
       .post('/api/library')
-      .send(newItem)
+      .send(newBook)
       .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
       .then(res => {
         res.should.have.status(201);
         return knex('books')
           .where({
-            title: newItem.title,
-            author: newItem.author,
-            summary: newItem.summary
+            title: newBook.title,
+            author: newBook.author,
+            summary: newBook.summary
           });
       })
       .then(_res => {
         let book = _res[0];
         book.should.have.property('id').which.is.a('number');
-        book.title.should.be.equal(newItem.title);
-        book.author.should.be.equal(newItem.author);
-        book.summary.should.be.equal(newItem.summary);
-      });
+        book.title.should.be.equal(newBook.title);
+        book.author.should.be.equal(newBook.author);
+        book.summary.should.be.equal(newBook.summary);
+      })
     });
   });
 
