@@ -15,7 +15,7 @@ const seedBookData = () => {
     seedData.push({
       title: 'Test title',
       author: 'test author',
-      summary: 'test description'
+      blurb: 'test description'
     })
   }
   return knex.insert(seedData).into('books');
@@ -25,10 +25,10 @@ const seedUserData = () => {
   console.info('seeding user data');
   return knex('users')
     .insert({
-      userid: 43214,
-      firstname: 'Jimmy',
-      lastname: 'BlueJeans',
-      accesstoken: `1927goiugrlkjsghfd87g23`
+      user_id: 43214,
+      first_name: 'Jimmy',
+      last_name: 'BlueJeans',
+      access_token: `1927goiugrlkjsghfd87g23`
     });
 }
 describe('Book-thing.io:', () => {
@@ -98,7 +98,7 @@ describe('Book-thing.io:', () => {
             res.body.forEach(book => {
               book.should.be.a('object');
               book.should.have.property('author');
-              book.should.have.property('summary');
+              book.should.have.property('blurb');
               book.should.have.property('title');
               book.should.have.property('id').which.is.a('number');
             })
@@ -107,9 +107,9 @@ describe('Book-thing.io:', () => {
 
       it('should draw the data from a database', () => {
         const newBook = {
-          title: 'Test title',
-          author: 'test author',
-          summary: 'test description'
+          title: 'New title',
+          author: 'New author',
+          blurb: 'New description'
         };
 
         return knex('books')
@@ -126,7 +126,7 @@ describe('Book-thing.io:', () => {
             let book = res.body[res.body.length-1];
             book.id.should.be.a('number');
             book.author.should.be.equal(newBook.author);
-            book.summary.should.be.equal(newBook.summary);
+            book.blurb.should.be.equal(newBook.blurb);
             book.title.should.be.equal(newBook.title);
           });
       });
@@ -152,7 +152,7 @@ describe('Book-thing.io:', () => {
           .end((err, res) => {
             res.should.have.status(302)
             res.headers['location'].should.be.equal('/');
-            res.headers['set-cookie'][0].split(';')[0].should.be.equal('accesstoken=');
+            res.headers['set-cookie'][0].split(';')[0].should.be.equal('accessToken=');
             done();
           });
       });
@@ -166,11 +166,13 @@ describe('Book-thing.io:', () => {
           .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
           .send()
           .then(res => {
+            res.should.have.status(200);
+            res.should.be.json();
             let user = res.body;
             user.id.should.be.a('number');
-            user.userid.should.be.equal('43214');
-            user.firstname.should.be.equal('Jimmy');
-            user.lastname.should.be.equal('BlueJeans');
+            user.user_id.should.be.equal('43214');
+            user.first_name.should.be.equal('Jimmy');
+            user.last_name.should.be.equal('BlueJeans');
           })
       })
     })
@@ -181,7 +183,7 @@ describe('Book-thing.io:', () => {
     const newBook = {
       title: 'New Test title',
       author: 'New test author',
-      summary: 'New test description'
+      blurb: 'New test description'
     };
 
     it('should return a status of 401 when incorrect login info is provided', () => {
@@ -202,11 +204,12 @@ describe('Book-thing.io:', () => {
       .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
       .then(res => {
         res.should.have.status(201);
+        res.should.be.json();
         return knex('books')
           .where({
             title: newBook.title,
             author: newBook.author,
-            summary: newBook.summary
+            blurb: newBook.blurb
           });
       })
       .then(_res => {
@@ -214,7 +217,7 @@ describe('Book-thing.io:', () => {
         book.should.have.property('id').which.is.a('number');
         book.title.should.be.equal(newBook.title);
         book.author.should.be.equal(newBook.author);
-        book.summary.should.be.equal(newBook.summary);
+        book.blurb.should.be.equal(newBook.blurb);
       })
     });
   });

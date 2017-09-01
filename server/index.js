@@ -37,23 +37,23 @@ passport.use(
   (accessToken, refreshToken, profile, cb) => {
     let user;
     knex('users')
-      .where('userid', profile.id)
+      .where('user_id', profile.id)
       .then(_user => {
         user = _user[0];
         if(!user) {
           return knex('users')
             .insert({
-              userid: profile.id,
-              firstname: profile.name.givenName,
-              lastname: profile.name.familyName,
-              accesstoken: accessToken
+              user_id: profile.id,
+              first_name: profile.name.givenName,
+              last_name: profile.name.familyName,
+              access_token: accessToken
             })
             .returning('*');
         }else {
           return knex('users')
-                 .where('userid', user.userid)
+                 .where('user_id', user.user_id)
                  .update({
-                   accesstoken: accessToken
+                   access_token: accessToken
                  })
                  .returning('*');
         }
@@ -67,7 +67,7 @@ passport.use(
 passport.use(
   new BearerStrategy((token, done) => {
     return knex('users')
-    .where('accesstoken', token)
+    .where('access_token', token)
     .then(_user => {
       let user = _user[0];
       if (!user) {
@@ -102,7 +102,7 @@ app.get('/api/auth/google/callback',
     session: false
   }),
   (req, res) => {
-    res.cookie('accessToken', req.user.accesstoken, {expires: 0});
+    res.cookie('accessToken', req.user.access_token, {expires: 0});
     res.redirect('/');
   });
 
@@ -110,9 +110,9 @@ app.get('/api/me',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
     res.status(200).json({id: req.user.id,
-              userid: req.user.userid,
-              firstname: req.user.firstname,
-              lastname: req.user.lastname,
+              user_id: req.user.user_id,
+              first_name: req.user.first_name,
+              last_name: req.user.last_name,
             });
 })
 
@@ -133,7 +133,7 @@ app.get('/api/library',
 
 app.get('/api/auth/logout', (req, res) => {
     req.logout();
-    res.clearCookie('accesstoken');
+    res.clearCookie('accessToken');
     res.redirect('/');
 });
 
