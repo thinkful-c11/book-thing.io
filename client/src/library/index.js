@@ -4,11 +4,10 @@ import { connect } from "react-redux";
 
 class Library extends React.Component {
   componentDidMount() {
-    this.props.dispatch(actions.fetchLibrary());
+    this.props.dispatch(actions.fetchLibrary(this.props.user.token));
   }
 
   render() {
-    console.log(this.props.books);
     const books = this.props.books.map((book, index) => {
       return (
         <li key={book.id}>
@@ -18,17 +17,14 @@ class Library extends React.Component {
         </li>
       );
     });
-    console.log(this.props);
     return (
       <div>
         <h1>Library</h1>
-        <ul>
-          {books}
-        </ul>
+        <ul>{books}</ul>
       </div>
     );
   }
 }
 
-const mapStateToProps = state => ({ books: state.library });
+const mapStateToProps = state => ({ books: state.library, user: state.user });
 export default connect(mapStateToProps)(Library);

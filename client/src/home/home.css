@@ -13,10 +13,14 @@ header nav {
   margin-top: 15px;
 }
 
+header nav a {
+  text-decoration: none;
+}
+
 header nav p {
   text-decoration: none;
   color: white;
-  font-family: 'Cabin';
+  font-family: "Cabin";
 }
 
 header > section {
@@ -37,12 +41,12 @@ header button {
   padding: 15px 25px;
   border-radius: 10px;
   color: #30343f;
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
 }
 
 header h1 {
   font-size: 3.4em;
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   color: white;
   text-align: left;
   width: 80%;
@@ -62,7 +66,7 @@ header h1 {
 }
 
 .home-body > div h2 {
-  font-family: 'Cabin';
+  font-family: "Cabin";
   font-size: 6em;
   width: 20%;
   height: 350px;
@@ -80,7 +84,7 @@ header h1 {
 .home-body > section div {
   margin: 30px;
   width: 70%;
-  font-family: 'Cabin';
+  font-family: "Cabin";
 }
 
 .home-body > section div h3 {

@@ -6,15 +6,39 @@ import * as Cookies from "js-cookie";
 
 //components
 import { Link } from "react-router-dom";
+import { connect } from "react-redux";
 
-export default class Home extends React.Component {
+//actions
+import { fetchUser, logOutUser } from "../redux/actions";
+
+export class Home extends React.Component {
   componentDidMount() {
-    const User = Cookies.get("accessToken");
-    if (User) {
-      console.log(User);
+    const accessToken = Cookies.get("accessToken");
+    if (accessToken) {
+      this.props.dispatch(fetchUser(accessToken));
     }
   }
+
+  handleLogOut() {
+    Cookies.remove("accessToken");
+    this.props.dispatch(logOutUser());
+  }
+
   render() {
+    let userToggleLogin;
+    if (this.props.user.loggedIn) {
+      userToggleLogin = (
+        <a onClick={() => this.handleLogOut()} href="/api/auth/logout">
+          <p>Log out</p>
+        </a>
+      );
+    } else {
+      userToggleLogin = (
+        <a href="/api/auth/google">
+          <p>Sign in</p>
+        </a>
+      );
+    }
     return (
       <section>
         <header>
@@ -35,9 +59,7 @@ export default class Home extends React.Component {
             >
               <p>Recommendations</p>
             </Link>
-            <a href="/api/auth/google">
-              <p>Sign in</p>
-            </a>
+            {userToggleLogin}
           </nav>
           <section>
             <img
@@ -83,3 +105,10 @@ export default class Home extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state, props) => ({
+  state: state,
+  user: state.user
+});
+
+export default connect(mapStateToProps)(Home);
