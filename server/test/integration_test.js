@@ -41,10 +41,20 @@ describe('Book-thing.io:', () => {
   });
 
   beforeEach(() => {
-    return seedUserData()
+    return knex('books')
+      .del()
+      .then(() => {
+        return knex('users').del()
+      })
+      .then(() => {
+        return seedUserData()
+      })
       .then(() => {
         return seedBookData();
       })
+      .catch((err) => {
+        console.error('ERROR', err.message);
+      });
   });
 
   // afterEach test, delete the test items in the table
@@ -133,7 +143,7 @@ describe('Book-thing.io:', () => {
     })
 
     describe('google authentication', () => {
-      
+
       it('should redirect to google authentication', done => {
         chai.request(app)
           .get('/api/auth/google').redirects(0)
