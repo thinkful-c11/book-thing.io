@@ -1,32 +1,19 @@
 const express = require('express');
 const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { TEST_DATABASE, PORT } = require('./config');
+const { TEST_DATABASE, PORT, CLIENT_ID, CLIENT_SECRET } = require('./config');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const parser = require('body-parser');
 const passport = require('passport');
-
 const app = express();
 
 let secret = {
-  CLIENT_ID: process.env.CLIENT_ID,
-  CLIENT_SECRET: process.env.CLIENT_SECRET
+  CLIENT_ID,
+  CLIENT_SECRET
 }
-
-// if (process.env.NODE_ENV !== 'production') {
-//   secret = require('./secret');
-// }
 
 app.use(passport.initialize());
 app.use(parser.json());
-
-
-
-// if (process.env.NODE_ENV == 'test') {
-//   Strategy = require('passport-mock').Strategy;
-// } else {
-//   Strategy = require('passport-google-oauth20').Strategy;
-// }
 
 passport.use(
   new GoogleStrategy({
@@ -51,11 +38,11 @@ passport.use(
             .returning('*');
         }else {
           return knex('users')
-                 .where('user_id', user.user_id)
-                 .update({
-                   access_token: accessToken
-                 })
-                 .returning('*');
+            .where('user_id', user.user_id)
+            .update({
+              access_token: accessToken
+            })
+            .returning('*');
         }
       })
       .then(user => {
