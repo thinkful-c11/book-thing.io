@@ -1,10 +1,10 @@
-const express = require("express");
-const path = require("path");
+const express = require('express');
+const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { TEST_DATABASE, PORT } = require("./config");
-const BearerStrategy = require("passport-http-bearer").Strategy;
-const parser = require("body-parser");
-const passport = require("passport");
+const { TEST_DATABASE, PORT } = require('./config');
+const BearerStrategy = require('passport-http-bearer').Strategy;
+const parser = require('body-parser');
+const passport = require('passport');
 
 const app = express();
 
@@ -36,12 +36,12 @@ passport.use(
   },
   (accessToken, refreshToken, profile, cb) => {
     let user;
-    knex("users")
-      .where("userid", profile.id)
+    knex('users')
+      .where('userid', profile.id)
       .then(_user => {
         user = _user[0];
         if(!user) {
-          return knex("users")
+          return knex('users')
             .insert({
               userid: profile.id,
               firstname: profile.name.givenName,
@@ -50,8 +50,8 @@ passport.use(
             })
             .returning('*');
         }else {
-          return knex("users")
-                 .where("userid", user.userid)
+          return knex('users')
+                 .where('userid', user.userid)
                  .update({
                    accesstoken: accessToken
                  })
@@ -81,22 +81,22 @@ passport.use(
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
   next();
 });
 
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Origin', '*');
   res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
   );
   next();
 });
 
-app.get("/api/auth/google", passport.authenticate('google', {scope: ['profile']}));
+app.get('/api/auth/google', passport.authenticate('google', {scope: ['profile']}));
 
-app.get("/api/auth/google/callback",
+app.get('/api/auth/google/callback',
   passport.authenticate('google', {
     failureRedirect: '/',
     session: false
@@ -106,41 +106,41 @@ app.get("/api/auth/google/callback",
     res.redirect('/');
   });
 
-app.get("/api/me",
+app.get('/api/me',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
-    res.json({id: req.user.id,
+    res.status(200).json({id: req.user.id,
               userid: req.user.userid,
               firstname: req.user.firstname,
               lastname: req.user.lastname,
             });
 })
 
-app.get("/api/library",
+app.get('/api/library',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
     return knex
-      .select("*")
-      .from("books")
+      .select('*')
+      .from('books')
       .then(results => {
-        res.json(results);
+        res.status(200).json(results);
       })
       .catch(error => {
         res.status(500);
-        console.error("Internal server error", error);
+        console.error('Internal server error', error);
       });
 });
 
-app.get("/api/auth/logout", (req, res) => {
+app.get('/api/auth/logout', (req, res) => {
     req.logout();
     res.clearCookie('accesstoken');
     res.redirect('/');
 });
 
-app.post("/api/library",
+app.post('/api/library',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
-   return knex("books")
+   return knex('books')
     .insert(req.body)
     .returning('id')
     .then(results => {
@@ -148,14 +148,14 @@ app.post("/api/library",
     })
     .catch(error => {
       res.status(500);
-      console.error("Internal server error", error);
+      console.error('Internal server error', error);
     })
 })
 
-app.use(express.static(path.resolve(__dirname, "../client/build")));
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
 app.get(/^(?!\/api(\/|$))/, (req, res) => {
-  const index = path.resolve(__dirname, "../client/build", "index.html");
+  const index = path.resolve(__dirname, '../client/build', 'index.html');
   res.sendFile(index);
 });
 
@@ -165,8 +165,8 @@ let knex;
 const runServer = (port = PORT, database = TEST_DATABASE) => {
   return new Promise((resolve, reject) => {
     try {
-      console.log("Database: ", database, "Port: ", port);
-      knex = require("knex")(database);
+      console.log('Database: ', database, 'Port: ', port);
+      knex = require('knex')(database);
       server = app.listen(port, () => {
         resolve();
       });
