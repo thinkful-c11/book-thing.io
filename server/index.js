@@ -3,7 +3,6 @@ const path = require("path");
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { TEST_DATABASE, PORT } = require("./config");
 const BearerStrategy = require("passport-http-bearer").Strategy;
-// let Strategy;
 const parser = require("body-parser");
 const passport = require("passport");
 
@@ -80,13 +79,13 @@ passport.use(
   })
 )
 
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
     "Access-Control-Allow-Headers",
@@ -109,16 +108,17 @@ app.get("/api/auth/google/callback",
 
 app.get("/api/me",
   passport.authenticate('bearer', {session: false}),
- (req, res) => {
-  res.json({id: req.user.id,
-            userid: req.user.userid,
-            firstname: req.user.firstname,
-            lastname: req.user.lastname,
+  (req, res) => {
+    res.json({id: req.user.id,
+              userid: req.user.userid,
+              firstname: req.user.firstname,
+              lastname: req.user.lastname,
             });
 })
 
-app.get("/api/library",   passport.authenticate('bearer', {session: false}), (req, res) => {
-    console.log("Are we here?");
+app.get("/api/library",
+  passport.authenticate('bearer', {session: false}),
+  (req, res) => {
     return knex
       .select("*")
       .from("books")
@@ -139,8 +139,8 @@ app.get("/api/auth/logout", (req, res) => {
 
 app.post("/api/library",
   passport.authenticate('bearer', {session: false}),
- (req, res) => {
-  return knex("books")
+  (req, res) => {
+   return knex("books")
     .insert(req.body)
     .returning('id')
     .then(results => {
