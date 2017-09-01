@@ -133,6 +133,7 @@ describe('Book-thing.io:', () => {
     })
 
     describe('google authentication', () => {
+      
       it('should redirect to google authentication', done => {
         chai.request(app)
           .get('/api/auth/google').redirects(0)
@@ -146,6 +147,7 @@ describe('Book-thing.io:', () => {
     });
 
     describe('logout', () => {
+
       it('should end the session and show homepage', done => {
         chai.request(app)
           .get('/api/auth/logout').redirects(0)
