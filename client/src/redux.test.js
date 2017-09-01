@@ -26,6 +26,7 @@ test("async action should fetch for the library and set it to state", function()
   };
   expect(store.getState().library).toHaveLength(0);
   return store.dispatch(actions.fetchLibrary()).then(() => {
-    expect(store.getActions()[1]).toEqual(expectedActions);
+    console.log("actions", store.getActions()[0]);
+    expect(store.getActions()[0]).toEqual(expectedActions);
   });
 });
