@@ -158,31 +158,31 @@ describe('Book-thing.io:', () => {
       });
     });
 
-  //   describe('/api/me', () => {
-  //     app.use((req, res, next) => {
-  //       req.user = {
-  //         userid: 43214,
-  //         firstname: 'Jimmy',
-  //         lastname: 'BlueJeans',
-  //         accesstoken: `1927goiugrlkjsghfd87g23`
-  //       };
-  //       next();
-  //     });
-  //     it ('should return the current user', () => {
-  //       return chai.request(app)
-  //         .get('/api/me')
-  //         .send({
-  //           userid: 43214,
-  //           firstname: 'Jimmy',
-  //           lastname: 'BlueJeans',
-  //           accesstoken: '1927goiugrlkjsghfd87g23'
-  //         })
-  //         .then(user => {
-  //           console.log(user);
-  //         })
-  //     })
-  //   })
-  // });
+    // describe('/api/me', () => {
+    //   app.use((req, res, next) => {
+    //     req.user = {
+    //       userid: 43214,
+    //       firstname: 'Jimmy',
+    //       lastname: 'BlueJeans',
+    //       accesstoken: `1927goiugrlkjsghfd87g23`
+    //     };
+    //     next();
+    //   });
+    //   it ('should return the current user', () => {
+    //     return chai.request(app)
+    //       .get('/api/me')
+    //       .send({
+    //         userid: 43214,
+    //         firstname: 'Jimmy',
+    //         lastname: 'BlueJeans',
+    //         accesstoken: '1927goiugrlkjsghfd87g23'
+    //       })
+    //       .then(user => {
+    //         console.log(user);
+    //       })
+    //   })
+    // })
+  });
 
   describe('POST endpoint', () => {
 
