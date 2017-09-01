@@ -60,7 +60,7 @@ describe('Book-thing.io:', () => {
       });
   });
 
-  describe('GET endpoints', () => {
+  xdescribe('GET endpoints', () => {
     describe('library', () => {
       it('should return a status of 200', () => {
         let res;
@@ -73,10 +73,11 @@ describe('Book-thing.io:', () => {
                });
       });
 
-      xit('should return books with correct fields', () => {
+      it('should return books with correct fields', () => {
         let res;
         return chai.request(app)
           .get('/api/library')
+          .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
           .send()
           .then(_res => {
             res = _res;
@@ -93,7 +94,7 @@ describe('Book-thing.io:', () => {
           });
       });
 
-      xit('should draw the data from a database', () => {
+      it('should draw the data from a database', () => {
         const newBook = {
           title: 'Test title',
           author: 'test author',
@@ -104,7 +105,10 @@ describe('Book-thing.io:', () => {
           .insert(newBook)
           .returning()
           .then(_res => {
-            return chai.request(app).get('/api/library').send();
+            return chai.request(app)
+              .get('/api/library')
+              .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
+              .send();
           })
           .then(_res => {
             let res = _res;
@@ -121,6 +125,7 @@ describe('Book-thing.io:', () => {
       it('should redirect to google authentication', done => {
         chai.request(app)
           .get('/api/auth/google').redirects(0)
+          .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
           .end((err, res) => {
             let location = res.headers['location'].split("?")[0];
             location.should.equal(`https://accounts.google.com/o/oauth2/v2/auth`)
@@ -142,25 +147,34 @@ describe('Book-thing.io:', () => {
       });
     });
 
-  //   describe('/api/me', () => {
-  //     it ('should return the current user', () => {
-  //       return chai.request(app)
-  //         .get('/api/me')
-  //         .send({
-  //           userid: 43214,
-  //           firstname: 'Jimmy',
-  //           lastname: 'BlueJeans',
-  //           accesstoken: '1927goiugrlkjsghfd87g23'
-  //         })
-  //         .then(user => {
-  //           console.log(user);
-  //         })
-  //     })
-  //   })
+    // describe('/api/me', () => {
+    //   app.use((req, res, next) => {
+    //     req.user = {
+    //       userid: 43214,
+    //       firstname: 'Jimmy',
+    //       lastname: 'BlueJeans',
+    //       accesstoken: `1927goiugrlkjsghfd87g23`
+    //     };
+    //     next();
+    //   });
+    //   it ('should return the current user', () => {
+    //     return chai.request(app)
+    //       .get('/api/me')
+    //       .send({
+    //         userid: 43214,
+    //         firstname: 'Jimmy',
+    //         lastname: 'BlueJeans',
+    //         accesstoken: '1927goiugrlkjsghfd87g23'
+    //       })
+    //       .then(user => {
+    //         console.log(user);
+    //       })
+    //   })
+    // })
   });
 
   xdescribe('POST endpoint', () => {
-    xit('should add a book to the database', () => {
+    it('should add a book to the database', () => {
       const newItem = {
         title: 'Test title',
         author: 'test author',
@@ -169,6 +183,7 @@ describe('Book-thing.io:', () => {
       return chai.request(app)
       .post('/api/library')
       .send(newItem)
+      .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
       .then(res => {
         res.should.have.status(201);
         return knex('books')
