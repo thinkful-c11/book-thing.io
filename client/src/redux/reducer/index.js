@@ -6,7 +6,8 @@ const initialState = {
   success: false,
   user: {
     loggedIn: false
-  }
+  },
+  list: []
 };
 
 export const reducer = (state = initialState, action) => {
@@ -18,10 +19,20 @@ export const reducer = (state = initialState, action) => {
       });
     case actions.SET_USER:
       return Object.assign({}, state, {
-        user: { ...action.user, token: action.token, loggedIn: true }
+        user: {
+          ...action.user,
+          token: action.token,
+          loggedIn: true
+        }
       });
     case actions.LOG_OUT_USER:
-      return Object({}, state, { user: { loggedIn: false } });
+      return Object({}, state, {
+        user: {
+          loggedIn: false
+        }
+      });
+    case actions.SET_LIST:
+      return Object({}, state, {list: action.list});
     default:
       return state;
   }
