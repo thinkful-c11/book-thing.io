@@ -5,11 +5,11 @@ import "./home.css";
 import * as Cookies from "js-cookie";
 
 //components
-import { Link } from "react-router-dom";
-import { connect } from "react-redux";
+import {Link} from "react-router-dom";
+import {connect} from "react-redux";
 
 //actions
-import { fetchUser, logOutUser } from "../redux/actions";
+import {fetchUser, logOutUser} from "../redux/actions";
 
 export class Home extends React.Component {
   constructor(props) {
@@ -20,16 +20,14 @@ export class Home extends React.Component {
   }
   componentDidMount() {
     const accessToken = Cookies.get("accessToken");
-    console.log(accessToken);
-    console.log(this.props.user);
     if (accessToken) {
-      this.setState({ loggedIn: true });
+      this.setState({loggedIn: true});
       this.props.dispatch(fetchUser(accessToken));
     }
   }
 
   handleLogOut() {
-    this.setState({ loggedIn: false });
+    this.setState({loggedIn: false});
     this.props.dispatch(logOutUser());
   }
 
@@ -52,32 +50,23 @@ export class Home extends React.Component {
       <section>
         <header>
           <nav>
-            <Link
-              style={{
-                textDecoration: "none"
-              }}
-              to="/library"
-            >
+            <Link style={{
+              textDecoration: "none"
+            }} to="/library">
               <p>Library</p>
             </Link>
-            <Link
-              style={{
-                textDecoration: "none"
-              }}
-              to="/recommendations"
-            >
+            <Link style={{
+              textDecoration: "none"
+            }} to="/recommendations">
               <p>Recommendations</p>
             </Link>
             {userToggleLogin}
           </nav>
           <section>
-            <img
-              src="/images/header-img.png"
-              alt="Oh no! Something went wrong."
-            />
+            <img src="/images/header-img.png" alt="Oh no! Something went wrong."/>
             <div>
               <h1>
-                The Ultimate Book<br />Recommendation Engine
+                The Ultimate Book<br/>Recommendation Engine
               </h1>
               <Link to="/library">
                 <button>Get Started</button>
@@ -97,15 +86,13 @@ export class Home extends React.Component {
             <div>
               <h3>Why Use Book-Thing.io</h3>
               <p>
-                We give you books you want to read not just the ones that sell
-                the best!
+                We give you books you want to read not just the ones that sell the best!
               </p>
             </div>
             <div>
               <h3>How to Use Book-Thing.io</h3>
               <p>
-                Simply Log-in, add books, and create recommendations for other
-                users that have read those books
+                Simply Log-in, add books, and create recommendations for other users that have read those books
               </p>
             </div>
           </section>
@@ -115,6 +102,6 @@ export class Home extends React.Component {
   }
 }
 
-const mapStateToProps = (state, props) => ({ state: state, user: state.user });
+const mapStateToProps = (state, props) => ({state: state, user: state.user});
 
 export default connect(mapStateToProps)(Home);

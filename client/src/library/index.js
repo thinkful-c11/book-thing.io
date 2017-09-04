@@ -14,8 +14,6 @@ class Library extends React.Component {
           Title: {book.title}
           <br/>
           Author: {book.author}
-          <br/>
-          Blurb: {book.blub}
         </li>
       );
     });

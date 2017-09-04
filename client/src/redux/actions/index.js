@@ -38,7 +38,6 @@ export const fetchLibrary = token => dispatch => {
     }
     return response.json();
   }).then(books => {
-    console.log(books);
     dispatch(setLibrary(books));
   }).catch(err => {
     console.error(err);
@@ -60,7 +59,7 @@ export const createBook = (books, token) => dispatch => {
 };
 
 export const createList = (list, token) => dispatch => {
-  return fetch('api/myList', {
+  return fetch('/api/list', {
     method: "post",
     body: JSON.stringify(list),
     headers: {

@@ -17,10 +17,15 @@ class Recommendations extends React.Component {
         }
       ]
     };
-    console.log(this.props.user.token);
     this.props.dispatch(actions.createBook(list.books[0], this.props.user.token));
     this.props.dispatch(actions.createList(list, this.props.user.token));
     this.props.dispatch(actions.fetchLibrary(this.props.user.token));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.myList !== nextProps.myList) {
+      console.log(this.props.myList.books);
+    }
   }
 
   render() {
@@ -51,7 +56,8 @@ class Recommendations extends React.Component {
           </form>
         </section>
         <section>
-          Your Lists {/* <ul>{list}</ul> */}
+          Your Lists
+          <ul>{list}</ul>
           Books in List
           <ul>{books}</ul>
         </section>
