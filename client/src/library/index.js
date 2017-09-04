@@ -1,6 +1,7 @@
 import React from "react";
 import * as actions from "../redux/actions";
 import {connect} from "react-redux";
+import "./library.css";
 
 class Library extends React.Component {
   componentDidMount() {
@@ -18,7 +19,7 @@ class Library extends React.Component {
       );
     });
     return (
-      <div>
+      <div className="library-list">
         <h1>Library</h1>
         <ul>{books}</ul>
       </div>

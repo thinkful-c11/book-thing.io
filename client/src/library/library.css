@@ -1,0 +1,13 @@
+body {
+  background-color: #175676;
+  text-align: center;
+}
+
+.library-list h1 {
+  color: #fafaff;
+}
+
+.library-list ul {
+  list-style: none;
+  color: #fafaff;
+}
