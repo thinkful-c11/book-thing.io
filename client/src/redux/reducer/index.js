@@ -32,7 +32,7 @@ export const reducer = (state = initialState, action) => {
         }
       });
     case actions.SET_LIST:
-      return Object({}, state, {list: action.list});
+      return Object.assign({}, state, {list: action.list});
     default:
       return state;
   }

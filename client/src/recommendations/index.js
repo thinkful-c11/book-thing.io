@@ -9,7 +9,13 @@ class Recommendations extends React.Component {
       user_id: '',
       list_name: '',
       tags: '',
-      books: [title : this.title.value, author : this.author.value, blurb : this.blurb.value]
+      books: [
+        {
+          title: this.title.value,
+          author: this.author.value,
+          blurb: this.blurb.value
+        }
+      ]
     };
     console.log(this.props.user.token);
     this.props.dispatch(actions.createBook(list.books[0], this.props.user.token));
@@ -18,7 +24,7 @@ class Recommendations extends React.Component {
   }
 
   render() {
-    const list = this.props.list.map((list, index) => {
+    const list = this.props.myList.map((list, index) => {
       return <li key={list.id}>
         List Name: {list.list_name}</li>;
     });
@@ -38,7 +44,7 @@ class Recommendations extends React.Component {
         </section>
         <section>
           Your Lists
-          <ul>{books}</ul>
+          <ul>{list}</ul>
         </section>
         <section>
           Top Recommendations for You
@@ -53,5 +59,5 @@ class Recommendations extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({myBooks: state.library, user: state.user});
+const mapStateToProps = state => ({myBooks: state.library, user: state.user, myList: state.list});
 export default connect(mapStateToProps)(Recommendations);
