@@ -1,4 +1,6 @@
 node_modules
 .nyc_output
 .env
+./client/package-lock.json
+./package-lock.json
 server/secret.js
