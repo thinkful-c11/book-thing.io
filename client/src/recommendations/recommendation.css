@@ -1,0 +1,40 @@
+form {
+  padding-top: 2%;
+}
+
+form input[type=text] {
+  width: 70%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form textarea {
+  width: 70%;
+  height: 150px;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+form button {
+  width: 70%;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.rec-list {
+  padding-top: 5%;
+}
+
+.rec-list li {
+  list-style: none;
+}
