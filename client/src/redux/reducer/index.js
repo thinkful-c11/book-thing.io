@@ -17,6 +17,8 @@ export const reducer = (state = initialState, action) => {
         library: action.books,
         success: true
       });
+    case actions.SET_LIST:
+      return Object.assign({}, state, {list: action.list});
     case actions.SET_USER:
       return Object.assign({}, state, {
         user: {
@@ -31,8 +33,6 @@ export const reducer = (state = initialState, action) => {
           loggedIn: false
         }
       });
-    case actions.SET_LIST:
-      return Object.assign({}, state, {list: action.list});
     default:
       return state;
   }
