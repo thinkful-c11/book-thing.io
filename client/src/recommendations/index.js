@@ -1,6 +1,7 @@
 import React from "react";
 import * as actions from "../redux/actions";
 import {connect} from "react-redux";
+import "./recommendation.css";
 
 class Recommendations extends React.Component {
   handleSubmit(event) {
@@ -50,15 +51,15 @@ class Recommendations extends React.Component {
             <input className="author" type="text" name="Author" placeholder="Author" ref={author => (this.author = author)}/>
             <textarea className="blurb" name="Blurb" placeholder="Blurb" ref={blurb => (this.blurb = blurb)}/>
             <input className="tags" type="text" name="tags" placeholder="tags" ref={tags => (this.tags = tags)}/>
-            <button className="submitBook" type="button" value="submit" onClick={event => this.handleSubmit(event)}>
-              Submit
+            <button className="submitBook" type="button" value="Submit" onClick={event => this.handleSubmit(event)}>
+              Create Book
             </button>
           </form>
         </section>
-        <section>
-          Your Lists
+        <section className="rec-list">
+          List You Have Created
           <ul>{list}</ul>
-          Books in List
+          Books in Your List
           <ul>{books}</ul>
         </section>
         <section>
