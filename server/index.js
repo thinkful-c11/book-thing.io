@@ -137,7 +137,57 @@ app.post('/api/library',
       res.status(500);
       console.error('Internal server error', error);
     })
-})
+});
+
+app.post('/api/list',
+  passport.authenticate('bearer', {session: false}),
+  (req, res) => {
+    let listID;
+    console.log('this is the user_id: ', req.body.user_id);
+    return knex('lists')
+     .insert(
+      {list_name: req.body.list_name,
+        tags: req.body.tags})
+      .returning('id')
+      .then(res => {
+        console.log(res);
+        listID = res[0];
+        
+        return knex('books')
+          .insert(req.body.books)
+          .returning('id');
+      })
+      .then(_res => {
+        console.log(_res);
+        const bookIDs = _res;
+        const listBookIDs = [];
+
+        bookIDs.forEach( bookID => {
+          listBookIDs.push(
+            {list_id: `${listID}`,
+              book_id: `${bookID}`
+            });
+        });
+
+        return knex('books_to_lists').insert(listBookIDs);
+      })
+      .then( () => {
+        return knex('lists_to_users')
+          .insert(
+          {list_id: `${listID}`,
+            user_id: `${req.body.user_id}`,
+            liked_flag: false
+          }).returning('id');
+      })
+      .then(results => {
+        res.status(201).json(results);
+      })
+      .catch(error => {
+        res.status(500);
+        console.error('Internal server error', error);
+      });
+  });
+
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 

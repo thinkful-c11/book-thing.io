@@ -8,31 +8,7 @@ const {TEST_DATABASE} = require('../config');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
-const clearDataBase = () => {
-  return knex('books')
-    .del()
-    .then(() => {
-      return knex('users').del()
-    })
-    .then(() => {
-      return knex('lists').del()
-    })
-    .then(() => {
-      return knex('lists_to_users').del()
-    })
-    .then(() => {
-      return knex('books_to_lists').del()
-    })
-    .then(() => {
-      return seedUserData()
-    })
-    .then(() => {
-      return seedBookData();
-    })
-    .catch((err) => {
-      console.error('ERROR', err.message);
-    });
-}
+let whatIwantuserID;
 
 const seedBookData = () => {
   console.info('seeding book data');
@@ -45,7 +21,7 @@ const seedBookData = () => {
     })
   }
   return knex.insert(seedData).into('books');
-}
+};
 
 const seedUserData = () => {
   console.info('seeding user data');
@@ -56,7 +32,10 @@ const seedUserData = () => {
       last_name: 'BlueJeans',
       access_token: `1927goiugrlkjsghfd87g23`
     });
-}
+};
+
+
+
 describe('Book-thing.io:', () => {
 
   before(() => runServer(undefined, TEST_DATABASE));
@@ -67,12 +46,50 @@ describe('Book-thing.io:', () => {
   });
 
   beforeEach(() => {
-    return clearDataBase();
+    return knex('lists_to_users')
+      .del()
+      .then( () => {
+        knex('books_to_lists').del();
+      })
+      .then( () => {
+        return knex('lists').del();
+      })
+      .then( () => {
+        return knex('books').del();
+      })
+      .then(() => {
+        return knex('users').del();
+      })
+      .then(() => {
+        return seedUserData();
+      })
+      .then(() => {
+        return seedBookData();
+      })
+      .catch((err) => {
+        console.error('ERROR', err.message);
+      });
   });
 
   // afterEach test, delete the test items in the table
   afterEach(() => {
-    return clearDataBase();
+    return knex('lists_to_users')
+      .del()
+      .then( () => {
+        return knex('books_to_lists').del();
+      })
+      .then( () => {
+        return knex('lists').del();
+      })
+      .then( () => {
+        return knex('books').del();
+      })
+      .then(() => {
+        return knex('users').del();
+      })
+      .catch((err) => {
+        console.error('ERROR', err.message);
+      });
   });
 
   describe('GET endpoints', () => {
@@ -86,7 +103,7 @@ describe('Book-thing.io:', () => {
             err.response.should.have.status(401);
             err.response.text.should.equal('Unauthorized');
           });
-      })
+      });
 
       it('should return a status of 200', () => {
         let res;
@@ -203,6 +220,23 @@ describe('Book-thing.io:', () => {
       blurb: 'New test description'
     };
 
+    const newList = {
+      user_id: 43214,
+      list_name: 'Chick Lit',
+      tags: '#chicklit#womensfic#girly#funny',
+      books: [
+        { title: `Bridget Jones's Diary`,
+          author: 'Helen Fielding',
+          blurb: 'Love Bridget in all her poor-decision-making glory!'
+        },
+        {
+          title: 'The Devil Wears Prada',
+          author: 'Lauren Weisberger',
+          blurb: 'How do you spell Gabbana?'
+        }
+      ]
+    };
+
     it('should return a status of 401 when incorrect login info is provided', () => {
       return chai.request(app)
         .post('/api/library')
@@ -210,7 +244,7 @@ describe('Book-thing.io:', () => {
         .catch(err => {
           err.response.should.have.status(401);
           err.response.text.should.equal('Unauthorized');
-        })
+        });
     });
 
     it('should add a book to the database', () => {
@@ -234,8 +268,40 @@ describe('Book-thing.io:', () => {
         book.title.should.be.equal(newBook.title);
         book.author.should.be.equal(newBook.author);
         book.blurb.should.be.equal(newBook.blurb);
-      })
+      });
     });
+
+    it('should return the id of a user-list association', () => {
+
+      return knex('users').where({user_id: 43214})
+        .then((_res) => {
+          newList.user_id = _res[0].id;
+          return chai.request(app)
+          .post('/api/list')
+          .send(newList)
+          .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
+          .then(res => {
+            //console.log(res.body);
+            res.should.have.status(201);
+            res.body.should.be.an('array');
+            res.body[0].should.be.a('number');
+            return knex('lists')
+              .where({
+                list_name: newList.list_name
+              });
+          })
+          .then(_res => {
+            let list = _res[0];
+            console.log(list);
+            list.should.have.property('id').which.is.a('number');
+            list.list_name.should.be.equal(newList.list_name);
+            list.tags.should.be.equal(newList.tags);
+            list.likes_counter.should.be.equal(0);
+          });
+        });
+    });
+
+
   });
 });
 
