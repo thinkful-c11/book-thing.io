@@ -1,7 +1,7 @@
 const express = require('express');
 const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { DATABASE, PORT, CLIENT_ID, CLIENT_SECRET } = require('./config');
+const { TEST_DATABASE, PORT, CLIENT_ID, CLIENT_SECRET } = require('./config');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const parser = require('body-parser');
 const passport = require('passport');
@@ -152,7 +152,7 @@ app.post('/api/list',
       .then(res => {
         console.log(res);
         listID = res[0];
-        
+
         return knex('books')
           .insert(req.body.books)
           .returning('id');
@@ -199,7 +199,7 @@ app.get(/^(?!\/api(\/|$))/, (req, res) => {
 let server;
 let knex;
 
-const runServer = (port = PORT, database = DATABASE) => {
+const runServer = (port = PORT, database = TEST_DATABASE) => {
   return new Promise((resolve, reject) => {
     try {
       console.log('Database: ', database, 'Port: ', port);
