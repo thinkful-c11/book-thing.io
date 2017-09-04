@@ -6,9 +6,9 @@ class Recommendations extends React.Component {
   handleSubmit(event) {
     event.preventDefault();
     const list = {
-      user_id: '',
-      list_name: '',
-      tags: '',
+      user_id: this.props.user.id,
+      list_name: this.listName.value,
+      tags: this.tags.value,
       books: [
         {
           title: this.title.value,
@@ -28,23 +28,32 @@ class Recommendations extends React.Component {
       return <li key={list.id}>
         List Name: {list.list_name}</li>;
     });
+
+    const books = this.props.myBooks.map((book, index) => {
+      return <li key={book.id}>
+        Book Title: {book.title}</li>
+    });
+
     return (
       <div>
         <h1>Book Recommendations</h1>
         <section>
           Create a new List
           <form>
+            <input className="listName" type="text" name="listName" placeholder="List Name" ref={listName => (this.listName = listName)}/>
             <input className="title" type="text" name="Title" placeholder="Title" ref={title => (this.title = title)}/>
             <input className="author" type="text" name="Author" placeholder="Author" ref={author => (this.author = author)}/>
             <textarea className="blurb" name="Blurb" placeholder="Blurb" ref={blurb => (this.blurb = blurb)}/>
+            <input className="tags" type="text" name="tags" placeholder="tags" ref={tags => (this.tags = tags)}/>
             <button className="submitBook" type="button" value="submit" onClick={event => this.handleSubmit(event)}>
               Submit
             </button>
           </form>
         </section>
         <section>
-          Your Lists
-          <ul>{list}</ul>
+          Your Lists {/* <ul>{list}</ul> */}
+          Books in List
+          <ul>{books}</ul>
         </section>
         <section>
           Top Recommendations for You
