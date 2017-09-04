@@ -8,6 +8,32 @@ const {TEST_DATABASE} = require('../config');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
+const clearDataBase = () => {
+  return knex('books')
+    .del()
+    .then(() => {
+      return knex('users').del()
+    })
+    .then(() => {
+      return knex('lists').del()
+    })
+    .then(() => {
+      return knex('lists_to_users').del()
+    })
+    .then(() => {
+      return knex('books_to_lists').del()
+    })
+    .then(() => {
+      return seedUserData()
+    })
+    .then(() => {
+      return seedBookData();
+    })
+    .catch((err) => {
+      console.error('ERROR', err.message);
+    });
+}
+
 const seedBookData = () => {
   console.info('seeding book data');
   const seedData = [];
@@ -41,33 +67,12 @@ describe('Book-thing.io:', () => {
   });
 
   beforeEach(() => {
-    return knex('books')
-      .del()
-      .then(() => {
-        return knex('users').del()
-      })
-      .then(() => {
-        return seedUserData()
-      })
-      .then(() => {
-        return seedBookData();
-      })
-      .catch((err) => {
-        console.error('ERROR', err.message);
-      });
+    return clearDataBase();
   });
 
   // afterEach test, delete the test items in the table
   afterEach(() => {
-    return knex('books')
-      .del()
-      .then(() => {
-        return knex('users')
-        .del()
-      })
-      .catch((err) => {
-        console.error('ERROR', err.message);
-      });
+    return clearDataBase();
   });
 
   describe('GET endpoints', () => {
