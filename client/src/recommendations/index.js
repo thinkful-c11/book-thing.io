@@ -19,7 +19,6 @@ class Recommendations extends React.Component {
     };
     this.props.dispatch(actions.createBook(list.books[0], this.props.user.token));
     this.props.dispatch(actions.createList(list, this.props.user.token));
-    this.props.dispatch(actions.fetchLibrary(this.props.user.token));
   }
 
   componentWillReceiveProps(nextProps) {
