@@ -44,6 +44,23 @@ export const fetchLibrary = token => dispatch => {
   });
 };
 
+export const fetchList = token => dispatch => {
+  return fetch('/api/list/:user_id', {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    return response.json();
+  }).then(list => {
+    dispatch(setList(list));
+  }).catch(err => {
+    console.error(err);
+  });
+};
+
 export const createBook = (books, token) => dispatch => {
   return fetch("/api/library", {
     method: "post",
