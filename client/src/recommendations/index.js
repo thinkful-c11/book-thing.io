@@ -71,15 +71,15 @@ class Recommendations extends React.Component {
       let bookList = list.books.map((book, index) => {
         return (
           <li key={index}>
-            <p>Title: {book.bookTitle}</p>
-            <p>Author: {book.bookAuthor}</p>
-            <p>Blurb: {book.blurb}</p>
+            Title: {book.bookTitle}<br/>
+            Author: {book.bookAuthor}<br/>
+            Blurb: {book.blurb}<br/>
           </li>
         );
       });
       return (
         <ul key={index}>
-          List Name: {list.listTitle}
+          <h1>List Name: {list.listTitle}</h1>
           <br/>
           Number of likes: {list.likes}
           <br/> {bookList}
@@ -95,6 +95,7 @@ class Recommendations extends React.Component {
           Author: {book.author}
           <br/>
           Blurb: {book.blurb}
+          <br/>
         </li>
       );
     });
