@@ -1,6 +1,6 @@
 import React from "react";
 import * as actions from "../redux/actions";
-import { connect } from "react-redux";
+import {connect} from "react-redux";
 import "./recommendation.css";
 
 class Recommendations extends React.Component {
@@ -43,9 +43,7 @@ class Recommendations extends React.Component {
     };
 
     this.props.dispatch(actions.createList(list, this.props.user.token));
-    this.props.dispatch(
-      actions.fetchList(this.props.user.token, this.props.user.id)
-    );
+    this.props.dispatch(actions.fetchList(this.props.user.token, this.props.user.id));
   }
 
   handleNewBook(event) {
@@ -60,28 +58,31 @@ class Recommendations extends React.Component {
     this.blurb.value = "";
     this.props.dispatch(actions.createBook(newBook, this.props.user.token));
     this.setState({
-      userBooks: [...this.state.userBooks, newBook]
+      userBooks: [
+        ...this.state.userBooks,
+        newBook
+      ]
     });
   }
 
   render() {
-    //console.log("My List", this.props.myList);
+    console.log("My List", this.props.myList);
     const list = this.props.myList.map((list, index) => {
       let bookList = list.books.map((book, index) => {
         return (
           <li key={index}>
-            <p>Title: {book.title}</p>
-            <p>Author: {book.author}</p>
+            <p>Title: {book.bookTitle}</p>
+            <p>Author: {book.bookAuthor}</p>
             <p>Blurb: {book.blurb}</p>
           </li>
         );
       });
       return (
         <ul key={index}>
-          List Name: {list.listName} <br />
+          List Name: {list.listTitle}
+          <br/>
           Number of likes: {list.likes}
-          <br />
-          {bookList}
+          <br/> {bookList}
         </ul>
       );
     });
@@ -90,9 +91,9 @@ class Recommendations extends React.Component {
       return (
         <li key={index}>
           Title: {book.title}
-          <br />
+          <br/>
           Author: {book.author}
-          <br />
+          <br/>
           Blurb: {book.blurb}
         </li>
       );
@@ -102,26 +103,9 @@ class Recommendations extends React.Component {
     if (!this.state.list.listName) {
       userForm = (
         <form>
-          <input
-            className="listName"
-            type="text"
-            name="listName"
-            placeholder="List Name"
-            ref={listName => (this.listName = listName)}
-          />
-          <input
-            className="tags"
-            type="text"
-            name="tags"
-            placeholder="tags"
-            ref={tags => (this.tags = tags)}
-          />
-          <button
-            className="submitBook"
-            type="button"
-            value="Submit"
-            onClick={event => this.handleListCreation(event)}
-          >
+          <input className="listName" type="text" name="listName" placeholder="List Name" ref={listName => (this.listName = listName)}/>
+          <input className="tags" type="text" name="tags" placeholder="tags" ref={tags => (this.tags = tags)}/>
+          <button className="submitBook" type="button" value="Submit" onClick={event => this.handleListCreation(event)}>
             Create List
           </button>
         </form>
@@ -129,40 +113,13 @@ class Recommendations extends React.Component {
     } else {
       userForm = (
         <form>
-          <input
-            className="title"
-            type="text"
-            name="Title"
-            placeholder="Title"
-            ref={title => (this.title = title)}
-          />
-          <input
-            className="author"
-            type="text"
-            name="Author"
-            placeholder="Author"
-            ref={author => (this.author = author)}
-          />
-          <textarea
-            className="blurb"
-            name="Blurb"
-            placeholder="Blurb"
-            ref={blurb => (this.blurb = blurb)}
-          />
-          <button
-            className="submitBook"
-            type="button"
-            value="Submit"
-            onClick={event => this.handleNewBook(event)}
-          >
+          <input className="title" type="text" name="Title" placeholder="Title" ref={title => (this.title = title)}/>
+          <input className="author" type="text" name="Author" placeholder="Author" ref={author => (this.author = author)}/>
+          <textarea className="blurb" name="Blurb" placeholder="Blurb" ref={blurb => (this.blurb = blurb)}/>
+          <button className="submitBook" type="button" value="Submit" onClick={event => this.handleNewBook(event)}>
             Create Book
           </button>
-          <button
-            className="submitList"
-            type="button"
-            value="Submit"
-            onClick={event => this.handleSubmitList(event)}
-          >
+          <button className="submitList" type="button" value="Submit" onClick={event => this.handleSubmitList(event)}>
             Create List
           </button>
         </form>
@@ -180,20 +137,16 @@ class Recommendations extends React.Component {
         </section>
         <section>
           Top Recommendations for You
-          <ul />
+          <ul/>
         </section>
         <section>
           Try these
-          <ul />
+          <ul/>
         </section>
       </div>
     );
   }
 }
-const mapStateToProps = state => ({
-  myBooks: state.library,
-  user: state.user,
-  myList: state.list
-});
+const mapStateToProps = state => ({myBooks: state.library, user: state.user, myList: state.list});
 
 export default connect(mapStateToProps)(Recommendations);
