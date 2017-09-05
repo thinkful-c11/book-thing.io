@@ -138,11 +138,11 @@ describe('Book-thing.io:', () => {
       });
 
       xit('should return all lists associated with the user', () => {
-        
+
         return chai.request(app)
           .get('/api/library')
           .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
-          
+
       });
 
       it('should draw the data from a database', () => {
@@ -295,9 +295,12 @@ describe('Book-thing.io:', () => {
             res.body[0].should.be.a('number');
             return knex('lists')
               .where({
-                list_name: newList.list_name
-              }).join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
-              .join('books', 'books.id', '=', 'books_to_lists.book_id');
+                  list_name: newList.list_name
+              })
+              .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
+              .join('books', 'books.id', '=', 'books_to_lists.book_id')
+              .select('lists.id','lists.list_name', 'lists.tags', 'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
+                'books.author', 'books.blurb');
           })
           .then(_res => {
             let list = _res[0];
