@@ -77,11 +77,12 @@ class Recommendations extends React.Component {
         );
       });
       return (
-        <li key={index}>
-          List Name: {list.listName}
+        <ul key={index}>
+          List Name: {list.listName} <br />
+          Number of likes: {list.likes}
           <br />
           {bookList}
-        </li>
+        </ul>
       );
     });
 
@@ -175,7 +176,7 @@ class Recommendations extends React.Component {
           Books You Have Created
           <ul>{books}</ul>
           List You Have Created
-          <ul>{list}</ul>
+          <div>{list}</div>
         </section>
         <section>
           Top Recommendations for You

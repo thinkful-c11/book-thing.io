@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import {Provider} from "react-redux";
+import { Provider } from "react-redux";
 import store from "../redux";
-import {shallow, mount} from "enzyme";
-import * as actions from "../redux/actions"
-import Recommendations from './index.js';
-const sinon = require('sinon');
+import { shallow, mount } from "enzyme";
+import * as actions from "../redux/actions";
+import Recommendations from "./index.js";
+const sinon = require("sinon");
 
 //mock async createBook action
 
@@ -13,14 +13,16 @@ it("renders without crashing", () => {
   const div = document.createElement("div");
   ReactDOM.render(
     <Provider store={store}>
-    <Recommendations/>
-  </Provider>, div);
+      <Recommendations />
+    </Provider>,
+    div
+  );
 });
 
-xit("dispatches createBook from handleSubmit", () => {
-  const book = {
-    title: "title",
-    author: "author",
+it("dispatches createBook from handleSubmit", () => {
+  const list = {
+    listName: "a list name",
+    tags: "some tags",
     blurb: "blurb"
   };
 
@@ -28,24 +30,19 @@ xit("dispatches createBook from handleSubmit", () => {
   const dispatch = jest.fn();
   const wrapper = mount(
     <Provider store={store}>
-      <Recommendations book={book} dispatch={dispatch}/>
+      <Recommendations list={list} dispatch={dispatch} />
     </Provider>
   );
-  wrapper.find("input.title").simulate('keypress', {
+  wrapper.find("input.listName").simulate("keypress", {
     target: {
-      value: book.title
+      value: list.listName
     }
   });
-  wrapper.find("input.author").simulate('keypress', {
+  wrapper.find("input.tags").simulate("keypress", {
     target: {
-      value: book.author
+      value: list.tags
     }
   });
-  wrapper.find("textarea.blurb").simulate('keypress', {
-    target: {
-      value: book.blurb
-    }
-  });
-  wrapper.find("button.submitBook").simulate('click');
-  //add an assert to check book in created in state
+  wrapper.find("button.submitBook").simulate("click");
+  expect(list.listName).toEqual(list.listName);
 });
