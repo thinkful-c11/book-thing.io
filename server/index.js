@@ -129,9 +129,25 @@ app.get('/api/usersLists/:id',
       .join('books', 'books.id', '=', 'books_to_lists.book_id')
       .select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag',
               'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title',
-              'books.author', 'books.blurb')
-      .then(results => {
-        // console.log(results);
+              'books.author', 'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter')
+      .then(_results => {
+      const results = {
+        liked_flag: _results[0].liked_flag,
+        likes: _results[0].likes_counter,
+        userId: _results[0].user_id,
+        listId: _results[0].list_id,
+        created_flag: _results[0].created_flag,
+        listTitle: _results[0].list_name,
+        tags: _results[0].tags,
+        books: []
+      }
+      _results.forEach(item => {
+        results.books.push({
+          bookTitle: item.title,
+          bookAuthor: item.author,
+          blurb: item.blurb
+        })
+      })
         res.status(200).json(results);
       })
       .catch(error => {

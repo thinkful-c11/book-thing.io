@@ -8,23 +8,6 @@ const {TEST_DATABASE} = require('../config');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
-// const newList = {
-//   user_id: 43214,
-//   list_name: 'Chick Lit',
-//   tags: '#chicklit#womensfic#girly#funny',
-//   books: [
-//     { title: `Bridget Jones's Diary`,
-//       author: 'Helen Fielding',
-//       blurb: 'Love Bridget in all her poor-decision-making glory!'
-//     },
-//     {
-//       title: 'The Devil Wears Prada',
-//       author: 'Lauren Weisberger',
-//       blurb: 'How do you spell Gabbana?'
-//     }
-//   ]
-// };
-
 const seedListData = (userID) => {
   console.info('seeding list data');
   let books;
@@ -278,7 +261,7 @@ describe('Book-thing.io:', () => {
     })
 
     describe('/api/usersLists', () => {
-      it('should return all lists associated with the user', () => {
+      it.only('should return all lists associated with the user', () => {
         return knex('users')
         .select('id')
         .then(res => {
@@ -288,20 +271,22 @@ describe('Book-thing.io:', () => {
             .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`);
         })
         .then(res => {
-          console.log(res.body);
           res.should.have.status(200);
           res.should.be.json;
-          res.body.should.be.an('array').with.length(10);
-          res.body.forEach(book => {
+          res.body.should.be.a('object');
+          res.body.should.have.property('userId').which.is.a('number');
+          res.body.should.have.property('listId').which.is.a('number');
+          res.body.created_flag.should.be.true;
+          res.body.listTitle.should.equal('Test List');
+          res.body.tags.should.equal('#test#dab#lit#fam');
+          res.body.liked_flag.should.be.false;
+          res.body.likes.should.be.a('number');
+          res.body.should.have.property('books');
+          res.body.books.should.be.an('array').which.has.length(10);
+          res.body.books.forEach(book => {
             book.should.be.a('object')
-            book.should.have.property('user_id').which.is.a('number');
-            book.should.have.property('list_id').which.is.a('number');
-            book.created_flag.should.be.true;
-            book.list_name.should.equal('Test List');
-            book.tags.should.equal('#test#dab#lit#fam');
-            book.should.have.property('book_id').which.is.a('number');
-            book.should.have.property('title').which.is.a('string');
-            book.should.have.property('author').which.is.a('string');
+            book.should.have.property('bookTitle').which.is.a('string');
+            book.should.have.property('bookAuthor').which.is.a('string');
             book.should.have.property('blurb').which.is.a('string');
           })
         })
