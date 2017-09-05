@@ -20,9 +20,10 @@
   "devDependencies": {
     "chai": "^4.1.1",
     "chai-http": "^3.0.0",
-    "passport-mock": "0.0.3",
+    "knex-cleaner": "^1.1.3",
     "mocha": "^3.5.0",
-    "nyc": "^11.1.0"
+    "nyc": "^11.1.0",
+    "passport-mock": "0.0.3"
   },
   "dependencies": {
     "body-parser": "^1.17.2",
