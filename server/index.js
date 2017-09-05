@@ -130,23 +130,32 @@ app.get('/api/usersLists/:id',
               'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title',
               'books.author', 'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter')
       .then(_results => {
-      const results = {
-        liked_flag: _results[0].liked_flag,
-        likes: _results[0].likes_counter,
-        userId: _results[0].user_id,
-        listId: _results[0].list_id,
-        created_flag: _results[0].created_flag,
-        listTitle: _results[0].list_name,
-        tags: _results[0].tags,
-        books: []
-      }
-      _results.forEach(item => {
-        results.books.push({
-          bookTitle: item.title,
-          bookAuthor: item.author,
-          blurb: item.blurb
+        const results = [];
+        let listID;
+        let resultIndex = -1;
+        _results.forEach((list, index) => {
+          if (!listID || listID !== list.list_id) {
+            listID = list.list_id;
+            resultIndex++;
+            results.push(
+              {
+                liked_flag: _results[index].liked_flag,
+                likes: _results[index].likes_counter,
+                userId: _results[index].user_id,
+                listId: _results[index].list_id,
+                created_flag: _results[index].created_flag,
+                listTitle: _results[index].list_name,
+                tags: _results[index].tags,
+                books: []
+              });
+          }
+          results[resultIndex].books.push(
+            {
+              bookTitle: list.title,
+              bookAuthor: list.author,
+              blurb: list.blurb
+            });
         })
-      })
         res.status(200).json(results);
       })
       .catch(error => {
