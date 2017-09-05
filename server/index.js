@@ -121,7 +121,6 @@ app.get('/api/library',
 app.get('/api/usersLists/:id',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
-    console.log('I am here, and these are my params: ', req.params.id);
     return knex('lists_to_users')
       .where({user_id: req.params.id})
       .join('lists', 'lists_to_users.list_id', '=', 'lists.id')
@@ -129,9 +128,34 @@ app.get('/api/usersLists/:id',
       .join('books', 'books.id', '=', 'books_to_lists.book_id')
       .select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag',
               'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title',
-              'books.author', 'books.blurb')
-      .then(results => {
-        // console.log(results);
+              'books.author', 'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter')
+      .then(_results => {
+        const results = [];
+        let listID;
+        let resultIndex = -1;
+        _results.forEach((list, index) => {
+          if (!listID || listID !== list.list_id) {
+            listID = list.list_id;
+            resultIndex++;
+            results.push(
+              {
+                liked_flag: _results[index].liked_flag,
+                likes: _results[index].likes_counter,
+                userId: _results[index].user_id,
+                listId: _results[index].list_id,
+                created_flag: _results[index].created_flag,
+                listTitle: _results[index].list_name,
+                tags: _results[index].tags,
+                books: []
+              });
+          }
+          results[resultIndex].books.push(
+            {
+              bookTitle: list.title,
+              bookAuthor: list.author,
+              blurb: list.blurb
+            });
+        })
         res.status(200).json(results);
       })
       .catch(error => {
@@ -165,22 +189,18 @@ app.post('/api/list',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
     let listID;
-    console.log('this is the user_id: ', req.body.user_id);
     return knex('lists')
      .insert(
       {list_name: req.body.list_name,
         tags: req.body.tags})
       .returning('id')
       .then(res => {
-        console.log(res);
         listID = res[0];
-
         return knex('books')
           .insert(req.body.books)
           .returning('id');
       })
       .then(_res => {
-        console.log(_res);
         const bookIDs = _res;
         const listBookIDs = [];
 
