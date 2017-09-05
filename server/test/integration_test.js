@@ -338,7 +338,6 @@ describe('Book-thing.io:', () => {
           .send(newList)
           .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
           .then(res => {
-            //console.log(res.body);
             res.should.have.status(201);
             res.body.should.be.an('array');
             res.body[0].should.be.a('number');
@@ -353,7 +352,6 @@ describe('Book-thing.io:', () => {
           })
           .then(_res => {
             let list = _res[0];
-            console.log(_res);
             list.should.have.property('id').which.is.a('number');
             list.list_name.should.be.equal(newList.list_name);
             list.tags.should.be.equal(newList.tags);

@@ -121,7 +121,6 @@ app.get('/api/library',
 app.get('/api/usersLists/:id',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
-    console.log('I am here, and these are my params: ', req.params.id);
     return knex('lists_to_users')
       .where({user_id: req.params.id})
       .join('lists', 'lists_to_users.list_id', '=', 'lists.id')
@@ -181,22 +180,18 @@ app.post('/api/list',
   passport.authenticate('bearer', {session: false}),
   (req, res) => {
     let listID;
-    console.log('this is the user_id: ', req.body.user_id);
     return knex('lists')
      .insert(
       {list_name: req.body.list_name,
         tags: req.body.tags})
       .returning('id')
       .then(res => {
-        console.log(res);
         listID = res[0];
-
         return knex('books')
           .insert(req.body.books)
           .returning('id');
       })
       .then(_res => {
-        console.log(_res);
         const bookIDs = _res;
         const listBookIDs = [];
 
