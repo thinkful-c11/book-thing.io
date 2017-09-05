@@ -2,6 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
 const expect = chai.expect;
+const knexCleaner = require('knex-cleaner');
 process.env.NODE_ENV = 'test';
 const {app, runServer, closeServer} = require('../index');
 const {TEST_DATABASE} = require('../config');
@@ -19,8 +20,7 @@ const seedListData = (userID) => {
         books: []
       }
   const seedData = [];
-  console.log(userID);
-  seedBookData()
+  return seedBookData()
   .then(res => {
     books = res;
     newList.books = books
@@ -94,20 +94,8 @@ describe('Book-thing.io:', () => {
 
   beforeEach(() => {
     console.log("Before");
-    return knex('lists_to_users')
-      .del()
-      .then( () => {
-        return knex('books_to_lists').del();
-      })
-      .then( () => {
-        return knex('lists').del();
-      })
-      .then( () => {
-        return knex('books').del();
-      })
-      .then(() => {
-        return knex('users').del();
-      })
+    return knexCleaner
+      .clean(knex)
       .then(() => {
         return seedUserData();
       })
@@ -122,20 +110,8 @@ describe('Book-thing.io:', () => {
   // afterEach test, delete the test items in the table
   afterEach(() => {
     console.log("After");
-    return knex('lists_to_users')
-      .del()
-      .then( () => {
-        return knex('books_to_lists').del();
-      })
-      .then( () => {
-        return knex('lists').del();
-      })
-      .then( () => {
-        return knex('books').del();
-      })
-      .then(() => {
-        return knex('users').del();
-      })
+    return knexCleaner
+      .clean(knex)
       .catch((err) => {
         console.error('ERROR', err.message);
       });
@@ -261,11 +237,10 @@ describe('Book-thing.io:', () => {
     })
 
     describe('/api/usersLists', () => {
-      it.only('should return all lists associated with the user', () => {
+      it('should return all lists associated with the user', () => {
         return knex('users')
         .select('id')
         .then(res => {
-          console.log('response from users table: ',res);
           return chai.request(app)
             .get(`/api/usersLists/${res[0].id}`)
             .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`);
