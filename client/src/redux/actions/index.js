@@ -55,7 +55,7 @@ export const fetchList = (token, user_id) => dispatch => {
     }
     return response.json();
   }).then(list => {
-    dispatch(setList([list]));
+    dispatch(setList(list));
   }).catch(err => {
     console.error(err);
   });
