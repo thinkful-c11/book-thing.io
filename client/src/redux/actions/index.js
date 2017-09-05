@@ -44,8 +44,8 @@ export const fetchLibrary = token => dispatch => {
   });
 };
 
-export const fetchList = token => dispatch => {
-  return fetch('/api/list/:user_id', {
+export const fetchList = (token, user_id) => dispatch => {
+  return fetch(`/api/usersLists/${user_id}`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -55,6 +55,14 @@ export const fetchList = token => dispatch => {
     }
     return response.json();
   }).then(list => {
+    console.log('list', list);
+    let arr = [];
+    let tempList = {
+      list_name: '',
+      user_id: '',
+      books: [],
+      tags: ''
+    }
     dispatch(setList(list));
   }).catch(err => {
     console.error(err);
