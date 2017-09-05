@@ -8,7 +8,7 @@ const {TEST_DATABASE} = require('../config');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
-let whatIwantuserID;
+
 
 const seedBookData = () => {
   console.info('seeding book data');
@@ -135,6 +135,14 @@ describe('Book-thing.io:', () => {
               book.should.have.property('id').which.is.a('number');
             })
           });
+      });
+
+      xit('should return all lists associated with the user', () => {
+        
+        return chai.request(app)
+          .get('/api/library')
+          .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
+          
       });
 
       it('should draw the data from a database', () => {
@@ -288,11 +296,12 @@ describe('Book-thing.io:', () => {
             return knex('lists')
               .where({
                 list_name: newList.list_name
-              });
+              }).join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
+              .join('books', 'books.id', '=', 'books_to_lists.book_id');
           })
           .then(_res => {
             let list = _res[0];
-            console.log(list);
+            console.log(_res);
             list.should.have.property('id').which.is.a('number');
             list.list_name.should.be.equal(newList.list_name);
             list.tags.should.be.equal(newList.tags);
