@@ -6,6 +6,7 @@ const knexCleaner = require('knex-cleaner');
 process.env.NODE_ENV = 'test';
 const {app, runServer, closeServer} = require('../index');
 const {TEST_DATABASE} = require('../config');
+const {recommendLists} = require('../recommendations');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
 
@@ -15,11 +16,11 @@ const seedListData = (userID) => {
   let listID;
   let listID2;
   const newList = {
-        user_id: userID,
-        list_name: 'Test List',
-        tags:'#test#dab#lit#fam',
-        books: []
-      }
+    user_id: userID,
+    list_name: 'Test List',
+    tags:'#test#dab#lit#fam',
+    books: []
+  }
   const newList2 = {
     user_id: userID,
     list_name: 'Test List 2',
@@ -34,7 +35,7 @@ const seedListData = (userID) => {
     newList2.books = books;
     return knex('lists')
       .insert(
-        [
+      [
           {
             list_name: newList.list_name,
             tags: newList.tags
@@ -43,7 +44,7 @@ const seedListData = (userID) => {
             list_name: newList2.list_name,
             tags: newList2.tags
           }
-        ]
+      ]
       )
       .returning('id')
   })
@@ -73,7 +74,7 @@ const seedListData = (userID) => {
   .then( () => {
     return knex('lists_to_users')
       .insert(
-        [
+      [
           {
             list_id: listID,
             user_id: userID,
@@ -84,7 +85,7 @@ const seedListData = (userID) => {
             user_id: userID,
             liked_flag: false
           }
-        ]
+      ]
       )
   })
 }
@@ -379,7 +380,7 @@ describe('Book-thing.io:', () => {
             res.body[0].should.be.a('number');
             return knex('lists')
               .where({
-                  list_name: newList.list_name
+                list_name: newList.list_name
               })
               .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
               .join('books', 'books.id', '=', 'books_to_lists.book_id')
@@ -398,6 +399,117 @@ describe('Book-thing.io:', () => {
 
 
   });
+
+  describe('Recommendations algorithm testing', () => {
+
+    it('recommendation function returns something', () => {
+
+      const myList = {
+        list_id: 42,
+        list_name: 'Sci-fi',
+        tags: '#scifi#space#funny#robots',
+        likes_counter: 42,
+        books: [
+          {
+            book_id: 1,
+            title: "Hitchhiker's Guide to the Galaxy",
+            author: "Douglas Adams",
+            blurb: "Marvin is the mopiest robot, ever!"
+          },
+          {
+            book_id: 2,
+            title: "I, Robot",
+            author: "Isaac Asimov",
+            blurb: "Save me from this AI madness"
+          }
+        ]
+      };
+      
+      const otherLists = [
+          
+        {
+          list_id: 17,
+          list_name: "YA fiction",
+          tags: '#ya#greatbooks#love#girly',
+          likes_counter: 12334354,
+          books: [
+            {
+              book_id: 17,
+              title: 'Twilight',
+              author: 'Stephanie Meyer',
+              blurb: 'Team Edward, 4ever!'
+            },
+            {
+              book_id: 18,
+              title: 'The Hunger Games',
+              author: 'Suzanne Collins',
+              blurb: 'Team Peeta, 4ever! He is the best'
+            }
+          ]
+        }, 
+        {
+          list_id: 2,
+          list_name: "Science fiction in Space",
+          tags: "#robots#space#scifi#movies",
+          likes_counter: 5,
+          books : [
+            {
+              book_id: 35,
+              title: "Do Android's Dream of Electric Sheep?",
+              author: "Phillip K. Dick",
+              blurb: "Must watch Blade Runner soon"
+            },
+            {
+              book_id: 36,
+              title: "Ender's Game",
+              author: "Orson Scott Card",
+              blurb: "WOW, the movie... just wow"
+            },
+            {
+              book_id: 37,
+              title: "Leviathan Wakes",
+              author: "S.A. Corey",
+              blurb: "Loved this. Can't wait to watch the show!"
+            }
+          ]
+        }, 
+        {
+          list_id: 7,
+          list_name: "Fun books",
+          tags: "#space#scifi#dystopia#fun",
+          likes_counter: 100,
+          books: [
+            {
+              book_id: 100,
+              title: "Saga, Vol 1",
+              author: "Brian K. Vaughan",
+              blurb: "So great! Really, really want to read more!"
+            },
+            {
+              book_id: 101,
+              title: "Ready Player One",
+              author: "Ernest Cline",
+              blurb: "The 80s references really make this book"
+            },
+            {
+              book_id: 1,
+              title: "Hitchhiker's Guide to the Galaxy",
+              author: "Douglas Adams",
+              blurb: "42! But what is the question?"
+            }
+          ]
+        }
+      ];
+
+      let returnVal;
+      returnVal = recommendLists(myList, otherLists);
+      returnVal.should.be.an('array');
+      returnVal.should.have.length(3);
+      returnVal[0].should.have.property('weight').which.is.a('number');
+    });
+
+  });
+
 });
 
 xdescribe('Testing server functions', () => {
