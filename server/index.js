@@ -154,63 +154,64 @@ app.post('/api/list', passport.authenticate('bearer', {session: false}), (req, r
     res.status(500);
     console.error('Internal server error', error);
   });
+});
 
-  app.put('/api/lists/likes/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
-    return knex('lists').where('id', '=', `${req.params.id}`).increment('likes_counter', 1).returning('likes_counter').then(_res => {
-      res.status(200).json(_res);
-    }).catch(err => {
-      res.status(500);
-      console.error('Internal server error', erro);
-    })
-  })
-
-  app.use(express.static(path.resolve(__dirname, '../client/build')));
-
-  app.get(/^(?!\/api(\/|$))/, (req, res) => {
-    const index = path.resolve(__dirname, '../client/build', 'index.html');
-    res.sendFile(index);
+app.put('/api/lists/likes/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
+  return knex('lists').where('id', '=', `${req.params.id}`).increment('likes_counter', 1).returning('likes_counter').then(_res => {
+    res.status(200).json(_res);
+  }).catch(err => {
+    res.status(500);
+    console.error('Internal server error', erro);
   });
+});
 
-  let server;
-  let knex;
+app.use(express.static(path.resolve(__dirname, '../client/build')));
 
-  const runServer = (port = PORT, database = TEST_DATABASE) => {
+app.get(/^(?!\/api(\/|$))/, (req, res) => {
+  const index = path.resolve(__dirname, '../client/build', 'index.html');
+  res.sendFile(index);
+});
+
+let server;
+let knex;
+
+const runServer = (port = PORT, database = TEST_DATABASE) => {
+  return new Promise((resolve, reject) => {
+    try {
+      console.log('Database: ', database, 'Port: ', port);
+      knex = require('knex')(database);
+      server = app.listen(port, () => {
+        resolve();
+      });
+    } catch (err) {
+      reject(err);
+    }
+  });
+};
+
+const closeServer = () => {
+  return knex.destroy().then(() => {
     return new Promise((resolve, reject) => {
-      try {
-        console.log('Database: ', database, 'Port: ', port);
-        knex = require('knex')(database);
-        server = app.listen(port, () => {
-          resolve();
-        });
-      } catch (err) {
-        reject(err);
-      }
-    });
-  };
-
-  const closeServer = () => {
-    return knex.destroy().then(() => {
-      return new Promise((resolve, reject) => {
-        server.close(err => {
-          if (err) {
-            return reject(err); //
-          }
-          resolve();
-        });
+      server.close(err => {
+        if (err) {
+          return reject(err); //
+        }
+        resolve();
       });
     });
-  };
+  });
+};
 
-  if (require.main === module) {
-    runServer().catch(err => {
-      //
-      console.error(`Can't start server: ${err}`);
-      throw err; //
-    });
-  }
+if (require.main === module) {
+  runServer().catch(err => {
+    //
+    console.error(`Can't start server: ${err}`);
+    throw err; //
+  });
+}
 
-  module.exports = {
-    app,
-    runServer,
-    closeServer
-  };
+module.exports = {
+  app,
+  runServer,
+  closeServer
+};
