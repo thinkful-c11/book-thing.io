@@ -333,6 +333,27 @@ describe('Book-thing.io:', () => {
         });
       });
     });
+
+    describe.only('/api/lists/', () => {
+
+      it('should return an array of lists', () => {
+        return knex('lists')
+          .limit(1)
+          .then( results => {
+            //console.log('logging in the test: ', results);
+            let listID = results[0].id;
+            return chai.request(app)
+            .get(`/api/lists/${listID}`)
+            .then( _res => {
+              //console.log('results of the get: ', _res.body);
+              _res.should.have.status(200);
+              _res.body.should.be.an('Object');
+              _res.body.books.should.be.an('array');
+            });
+          });
+      });
+    });
+
   });
 
   describe('POST endpoint', () => {

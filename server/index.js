@@ -77,7 +77,7 @@ app.get('/api/auth/google/callback', passport.authenticate('google', {
 
 app.get('/api/me', passport.authenticate('bearer', {session: false}), (req, res) => {
   res.status(200).json({id: req.user.id, user_id: req.user.user_id, first_name: req.user.first_name, last_name: req.user.last_name});
-})
+});
 
 app.get('/api/library', passport.authenticate('bearer', {session: false}), (req, res) => {
   return knex.select('*').from('books').then(results => {
@@ -86,6 +86,52 @@ app.get('/api/library', passport.authenticate('bearer', {session: false}), (req,
     res.status(500);
     console.error('Internal server error', error);
   });
+});
+
+app.get('/api/lists/:id', (req, res) => {
+  let myListToReturn;
+  let otherListsToReturn;
+  const promises = [];
+  return knex('lists')
+    .where({id: req.params.id})
+    .then(results => {
+      console.log('results of the get: ', results[0]);
+      myListToReturn = results[0];
+      //res.status(200).json(results);
+    }).then(() => {
+      return knex('books_to_lists')
+        .where({list_id: myListToReturn.id})
+        .join('books', 'books.id', '=', 'books_to_lists.book_id')
+        .select('books.id', 'books.title', 'books.author', 'books.blurb');
+    }).then(_res => {
+      //console.log(_res);
+      myListToReturn.books = _res;
+      return knex('lists');
+        
+    }).then(results => {
+      console.log("all the lists created: ", results);
+      otherListsToReturn = results;
+      otherListsToReturn.forEach( otherList => {
+        promises.push(knex('books_to_lists')
+        .where({list_id: otherList.id})
+        .join('books', 'books.id', '=', 'books_to_lists.book_id')
+        .select('books.id', 'books.title', 'books.author', 'books.blurb')
+        .then(results => {
+          let index = otherListsToReturn.findIndex(list => { return list.id === otherList.id; });
+          otherListsToReturn[index].books = results;
+        }));
+      });
+      console.log("this is an array of promises, hopefully: ", promises);
+    }).then( () => {
+      return Promise.all(promises)
+        .then(() => {
+          console.log("here goes nothing, please work:", otherListsToReturn[0].books);
+          res.status(200).json(myListToReturn);
+        });
+    }).catch(error => {
+      res.status(500);
+      console.error('Internal server error', error);
+    });
 });
 
 app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
@@ -116,7 +162,7 @@ app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false})
           });
         }
         results[resultIndex].books.push({bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
-      })
+      });
       res.status(200).json(results);
     }).catch(error => {
       res.status(500);
@@ -168,7 +214,7 @@ app.put('/api/lists/likes/:id', passport.authenticate('bearer', {session: false}
     res.status(200).json(_res);
   }).catch(err => {
     res.status(500);
-    console.error('Internal server error', erro);
+    console.error('Internal server error', err);
   });
 });
 
