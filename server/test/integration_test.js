@@ -114,8 +114,6 @@ const seedUserData = () => {
     .returning('id');
 };
 
-
-
 describe('Book-thing.io:', () => {
 
   before(() => runServer(undefined, TEST_DATABASE));
@@ -299,7 +297,6 @@ describe('Book-thing.io:', () => {
               book.should.have.property('blurb').which.is.a('string');
             })
           })
-
         })
       });
     })
@@ -395,9 +392,45 @@ describe('Book-thing.io:', () => {
           });
         });
     });
-
-
   });
+
+  describe.only ('PUT endpoints', () => {
+
+    describe ('api/lists/likes', () => {
+
+      it ('should return a status of 401 when incorrect login info is provided', () => {
+        return chai.request(app)
+          .put('/api/lists/likes/124234')
+          .send()
+          .catch(err => {
+            err.response.should.have.status(401);
+            err.response.text.should.equal('Unauthorized');
+          });
+      });
+
+      it ('should return a status of 200 when correct login info is provide', () => {
+        let listID;
+        return knex('lists')
+          .select('id')
+          .then(_id => {
+            listID = _id[0].id;
+            return chai.request(app)
+              .put(`/api/lists/likes/${listID}`)
+              .set('Authorization', `Bearer 1927goiugrlkjsghfd87g23`)
+              .send();
+          })
+          .then(res => {
+            res.should.have.status(200);
+            return knex('lists')
+              .where('id', '=', listID)
+              .select('likes_counter')
+          })
+          .then(_res => {
+            _res[0].likes_counter.should.equal(1);
+          })
+        })
+      })
+    })
 });
 
 xdescribe('Testing server functions', () => {

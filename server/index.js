@@ -230,6 +230,21 @@ app.post('/api/list',
       });
   });
 
+app.put('/api/lists/likes/:id',
+  passport.authenticate('bearer', {session: false}),
+  (req, res) => {
+    return knex('lists')
+      .where('id', '=', `${req.params.id}`)
+      .increment('likes_counter', 1)
+      .returning('likes_counter')
+      .then(_res => {
+        res.status(200).json(_res);
+      })
+      .catch(err => {
+        res.status(500);
+        console.error('Internal server error', erro);
+      })
+  })
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
