@@ -126,11 +126,7 @@ describe('Book-thing.io:', () => {
 
   beforeEach(() => {
     console.log('Before');
-    return knexCleaner
-      .clean(knex)
-      .then(() => {
-        return seedUserData();
-      })
+    return seedUserData()
       .then(user => {
         return seedListData(user[0]);
       })
@@ -435,7 +431,7 @@ describe('Book-thing.io:', () => {
 
   describe('Recommendations algorithm testing', () => {
 
-    
+
 
     const myList = {
       list_id: 42,
