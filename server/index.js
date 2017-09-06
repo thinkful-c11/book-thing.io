@@ -89,31 +89,38 @@ app.get('/api/library', passport.authenticate('bearer', {session: false}), (req,
 });
 
 app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
-  return knex('lists_to_users').where({user_id: req.params.id}).join('lists', 'lists_to_users.list_id', '=', 'lists.id').join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id').join('books', 'books.id', '=', 'books_to_lists.book_id').select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag', 'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title', 'books.author', 'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter').then(_results => {
-    const results = [];
-    let listID;
-    let resultIndex = -1;
-    _results.forEach((list, index) => {
-      if (!listID || listID !== list.list_id) {
-        listID = list.list_id;
-        resultIndex++;
-        results.push({
-          liked_flag: _results[index].liked_flag,
-          likes: _results[index].likes_counter,
-          userId: _results[index].user_id,
-          listId: _results[index].list_id,
-          created_flag: _results[index].created_flag,
-          listTitle: _results[index].list_name,
-          tags: _results[index].tags,
-          books: []
-        });
-      }
-      results[resultIndex].books.push({bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
-    })
-    res.status(200).json(results);
-  }).catch(error => {
-    res.status(500);
-    console.error('Internal server error', error);
+  return knex('lists_to_users').where({user_id: req.params.id})
+    .join('lists', 'lists_to_users.list_id', '=', 'lists.id')
+    .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
+    .join('books', 'books.id', '=', 'books_to_lists.book_id')
+    .select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag',
+     'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title', 'books.author',
+     'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter')
+    .then(_results => {
+      const results = [];
+      let listID;
+      let resultIndex = -1;
+      _results.forEach((list, index) => {
+        if (!listID || listID !== list.list_id) {
+          listID = list.list_id;
+          resultIndex++;
+          results.push({
+            liked_flag: _results[index].liked_flag,
+            likes: _results[index].likes_counter,
+            userId: _results[index].user_id,
+            listId: _results[index].list_id,
+            created_flag: _results[index].created_flag,
+            listTitle: _results[index].list_name,
+            tags: _results[index].tags,
+            books: []
+          });
+        }
+        results[resultIndex].books.push({bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
+      })
+      res.status(200).json(results);
+    }).catch(error => {
+      res.status(500);
+      console.error('Internal server error', error);
   });
 });
 

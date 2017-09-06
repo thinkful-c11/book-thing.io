@@ -126,10 +126,26 @@ describe('Book-thing.io:', () => {
 
   beforeEach(() => {
     console.log('Before');
-    return knexCleaner
-      .clean(knex)
+    return knex('books_to_lists')
+      .del()
       .then(() => {
-        return seedUserData();
+        return knex('lists_to_users')
+          .del();
+      })
+      .then(() => {
+        return knex('lists')
+          .del()
+      })
+      .then(() => {
+        return knex('books')
+          .del()
+      })
+      .then(() => {
+        return knex('users')
+          .del();
+      })
+      .then(() => {
+        return seedUserData()
       })
       .then(user => {
         return seedListData(user[0]);
@@ -142,8 +158,24 @@ describe('Book-thing.io:', () => {
   // afterEach test, delete the test items in the table
   afterEach(() => {
     console.log('After');
-    return knexCleaner
-      .clean(knex)
+    return knex('books_to_lists')
+      .del()
+      .then(() => {
+        return knex('lists_to_users')
+          .del();
+      })
+      .then(() => {
+        return knex('lists')
+          .del()
+      })
+      .then(() => {
+        return knex('books')
+          .del()
+      })
+      .then(() => {
+        return knex('users')
+          .del();
+      })
       .catch((err) => {
         console.error('ERROR', err.message);
       });
@@ -435,7 +467,7 @@ describe('Book-thing.io:', () => {
 
   describe('Recommendations algorithm testing', () => {
 
-    
+
 
     const myList = {
       list_id: 42,
@@ -537,7 +569,7 @@ describe('Book-thing.io:', () => {
     it('weightList function returns weights', () => {
 
       let returnVal;
-      returnVal = weightLists(myList, otherLists);
+      returnVal = weightLists(myList, [...otherLists, myList]);
       returnVal.should.be.an('array');
       returnVal.should.have.length(3);
       returnVal[0].should.have.property('weight').which.is.a('number');
