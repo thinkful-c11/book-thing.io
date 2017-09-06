@@ -10,6 +10,10 @@ export const logOutUser = () => ({type: LOG_OUT_USER});
 export const SET_LIST = "SET_LIST";
 export const setList = list => ({type: SET_LIST, list});
 
+//MAYBE??????? NO reducer yet
+export const SET_LIKES = "SET_LIKES";
+export const setList = likes => ({type: SET_LIKES, likes});
+
 export const fetchUser = accessToken => dispatch => {
   return fetch("/api/me", {
     headers: {
@@ -78,6 +82,20 @@ export const createBook = (books, token) => dispatch => {
 export const createList = (list, token) => dispatch => {
   return fetch("/api/list", {
     method: "post",
+    body: JSON.stringify(list),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    }
+  }).catch(err => {
+    console.error(err);
+  });
+};
+
+export const updateLikes = (list, list_id, token) => dispath => {
+  return fetch('/api/lists/likes/:list_id', {
+    method: "put",
     body: JSON.stringify(list),
     headers: {
       Accept: "application/json",
