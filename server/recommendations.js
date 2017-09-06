@@ -97,7 +97,7 @@ const otherLists = [
   }
 ];
 
-const recommendLists = (myList, otherLists) => {
+const weightLists = (myList, otherLists) => {
      
   //splits the tags string on #'s and removes the leading white space
   const tags = myList.tags.split('#').splice(1);
@@ -112,11 +112,23 @@ const recommendLists = (myList, otherLists) => {
         weight++;
     });
 
-    console.log('this is the list name: ', list.list_name);
-    console.log('this is the list weight: ', weight);
+    //console.log('this is the list name: ', list.list_name);
+    //console.log('this is the list weight: ', weight);
     list.weight = weight;
   });
   return otherLists;
 };
 
-module.exports = {recommendLists};
+const recommendList = (weightedLists) => {
+
+  let index, maxWeight = 0;
+  weightedLists.forEach((list, i) => {
+    if(list.weight > maxWeight){
+      maxWeight = list.weight;
+      index = i;
+    }
+  });
+  return weightedLists[index];
+};
+
+module.exports = {weightLists, recommendList};
