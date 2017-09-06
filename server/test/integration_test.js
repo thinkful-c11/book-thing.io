@@ -138,7 +138,7 @@ describe('Book-thing.io:', () => {
   // afterEach test, delete the test items in the table
   afterEach(() => {
     console.log('After');
-    return knexCleaner
+    knexCleaner
       .clean(knex)
       .catch((err) => {
         console.error('ERROR', err.message);
