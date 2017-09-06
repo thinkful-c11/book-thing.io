@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const {TEST_DATABASE, PORT, CLIENT_ID, CLIENT_SECRET} = require('./config');
+const {recommendList, weightLists} = require('./recommendations');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const parser = require('body-parser');
 const passport = require('passport');
@@ -92,10 +93,11 @@ app.get('/api/lists/:id', (req, res) => {
   let myListToReturn;
   let otherListsToReturn;
   const promises = [];
+  let recommendation = [];
   return knex('lists')
     .where({id: req.params.id})
     .then(results => {
-      console.log('results of the get: ', results[0]);
+      //console.log('results of the get: ', results[0]);
       myListToReturn = results[0];
       //res.status(200).json(results);
     }).then(() => {
@@ -106,10 +108,11 @@ app.get('/api/lists/:id', (req, res) => {
     }).then(_res => {
       //console.log(_res);
       myListToReturn.books = _res;
+      //console.log("my list with books: ", myListToReturn);
       return knex('lists');
         
     }).then(results => {
-      console.log("all the lists created: ", results);
+      //console.log("all the lists created: ", results);
       otherListsToReturn = results;
       otherListsToReturn.forEach( otherList => {
         promises.push(knex('books_to_lists')
@@ -121,13 +124,35 @@ app.get('/api/lists/:id', (req, res) => {
           otherListsToReturn[index].books = results;
         }));
       });
-      console.log("this is an array of promises, hopefully: ", promises);
+      //console.log("this is an array of promises, hopefully: ", promises);
     }).then( () => {
-      return Promise.all(promises)
-        .then(() => {
-          console.log("here goes nothing, please work:", otherListsToReturn[0].books);
-          res.status(200).json(myListToReturn);
-        });
+      return Promise.all(promises);
+        // .then(() => {
+        //   console.log("here goes nothing, please work:", otherListsToReturn[0].books);
+        // });
+    }).then(() => {
+      //console.log("my list: ", myListToReturn);
+      //console.log("what are we getting back?: ", otherListsToReturn);
+      recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
+      console.log("the recommended list: ", recommendation);
+      //res.status(200).json(recommendation);
+      return knex("lists_to_users")
+        .where({
+          list_id: req.params.id,
+          created_flag: true
+        }).select('user_id');
+    }).then(result => {
+      console.log(result[0].user_id);
+      return knex("lists_to_users")
+        .insert(
+        {
+          user_id : result[0].user_id, 
+          list_id: recommendation.id,
+          created_flag: false
+        }).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
+    }).then(final_result => {
+      console.log("the final boss: ", final_result);
+      res.status(200).json(final_result[0]);
     }).catch(error => {
       res.status(500);
       console.error('Internal server error', error);

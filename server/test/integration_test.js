@@ -31,8 +31,8 @@ const seedListData = (userID) => {
   return seedBookData()
   .then(res => {
     books = res;
-    newList.books = books;
-    newList2.books = books;
+    newList.books = books.slice(0, 5);
+    newList2.books = books.slice(4, 9);
     return knex('lists')
       .insert(
       [
@@ -322,7 +322,7 @@ describe('Book-thing.io:', () => {
             list.liked_flag.should.be.false;
             list.likes.should.be.a('number').which.is.equal(0);
             list.should.have.property('books');
-            list.books.should.be.an('array').which.has.length(10);
+            list.books.should.be.an('array').which.has.length(5);
             list.books.forEach(book => {
               book.should.be.a('object');
               book.should.have.property('bookTitle').which.is.a('string');
@@ -334,7 +334,7 @@ describe('Book-thing.io:', () => {
       });
     });
 
-    describe.only('/api/lists/', () => {
+    describe('/api/lists/', () => {
 
       it('should return an array of lists', () => {
         return knex('lists')
@@ -348,7 +348,6 @@ describe('Book-thing.io:', () => {
               //console.log('results of the get: ', _res.body);
               _res.should.have.status(200);
               _res.body.should.be.an('Object');
-              _res.body.books.should.be.an('array');
             });
           });
       });
@@ -497,13 +496,13 @@ describe('Book-thing.io:', () => {
       likes_counter: 42,
       books: [
         {
-          book_id: 1,
+          id: 1,
           title: 'Hitchhiker\'s Guide to the Galaxy',
           author: 'Douglas Adams',
           blurb: 'Marvin is the mopiest robot, ever!'
         },
         {
-          book_id: 2,
+          id: 2,
           title: 'I, Robot',
           author: 'Isaac Asimov',
           blurb: 'Save me from this AI madness'
@@ -520,13 +519,13 @@ describe('Book-thing.io:', () => {
         likes_counter: 12334354,
         books: [
           {
-            book_id: 17,
+            id: 17,
             title: 'Twilight',
             author: 'Stephanie Meyer',
             blurb: 'Team Edward, 4ever!'
           },
           {
-            book_id: 18,
+            id: 18,
             title: 'The Hunger Games',
             author: 'Suzanne Collins',
             blurb: 'Team Peeta, 4ever! He is the best'
@@ -540,19 +539,19 @@ describe('Book-thing.io:', () => {
         likes_counter: 5,
         books : [
           {
-            book_id: 35,
+            id: 35,
             title: 'Do Android\'s Dream of Electric Sheep?',
             author: 'Phillip K. Dick',
             blurb: 'Must watch Blade Runner soon'
           },
           {
-            book_id: 36,
+            id: 36,
             title: 'Ender\'s Game',
             author: 'Orson Scott Card',
             blurb: 'WOW, the movie... just wow'
           },
           {
-            book_id: 37,
+            id: 37,
             title: 'Leviathan Wakes',
             author: 'S.A. Corey',
             blurb: 'Loved this. Can\'t wait to watch the show!'
@@ -566,19 +565,19 @@ describe('Book-thing.io:', () => {
         likes_counter: 100,
         books: [
           {
-            book_id: 100,
+            id: 100,
             title: 'Saga, Vol 1',
             author: 'Brian K. Vaughan',
             blurb: 'So great! Really, really want to read more!'
           },
           {
-            book_id: 101,
+            id: 101,
             title: 'Ready Player One',
             author: 'Ernest Cline',
             blurb: 'The 80s references really make this book'
           },
           {
-            book_id: 1,
+            id: 1,
             title: 'Hitchhiker\'s Guide to the Galaxy',
             author: 'Douglas Adams',
             blurb: '42! But what is the question?'
