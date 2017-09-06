@@ -126,7 +126,27 @@ describe('Book-thing.io:', () => {
 
   beforeEach(() => {
     console.log('Before');
-    return seedUserData()
+    return knex('books_to_lists')
+      .del()
+      .then(() => {
+        return knex('lists_to_users')
+          .del();
+      })
+      .then(() => {
+        return knex('lists')
+          .del()
+      })
+      .then(() => {
+        return knex('books')
+          .del()
+      })
+      .then(() => {
+        return knex('users')
+          .del();
+      })
+      .then(() => {
+        return seedUserData()
+      })
       .then(user => {
         return seedListData(user[0]);
       })
@@ -138,8 +158,24 @@ describe('Book-thing.io:', () => {
   // afterEach test, delete the test items in the table
   afterEach(() => {
     console.log('After');
-    knexCleaner
-      .clean(knex)
+    return knex('books_to_lists')
+      .del()
+      .then(() => {
+        return knex('lists_to_users')
+          .del();
+      })
+      .then(() => {
+        return knex('lists')
+          .del()
+      })
+      .then(() => {
+        return knex('books')
+          .del()
+      })
+      .then(() => {
+        return knex('users')
+          .del();
+      })
       .catch((err) => {
         console.error('ERROR', err.message);
       });
