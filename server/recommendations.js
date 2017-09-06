@@ -99,11 +99,29 @@ const otherLists = [
 
 const weightLists = (myList, otherLists) => {
      
+  const filteredLists = otherLists.filter(list => {
+    if( ! myList.books.every( book => {
+      //console.log("list (mine/other): ", myList, list);
+      return ( list.books.findIndex( ol_book => {
+        //console.log("the current book on the other list: ", ol_book);
+        //console.log("book id (mine/other): ", book.book_id, ol_book.book_id);
+        //console.log("book titles (mine/other): ", book.title, ol_book.title);
+        let result = (book.book_id === ol_book.book_id || book.title === ol_book.title);
+        //console.log("this is the result: ", result);
+        return result;  
+      }) ) !== -1;
+
+    }))
+      return list;
+  });
+
+  console.log(filteredLists);
+    
   //splits the tags string on #'s and removes the leading white space
   const tags = myList.tags.split('#').splice(1);
   console.log(tags);
 
-  otherLists.forEach(list => {
+  filteredLists.forEach(list => {
     let weight = 0;
     if(list.likes_counter >= myList.likes_counter)
       weight++;
@@ -116,7 +134,7 @@ const weightLists = (myList, otherLists) => {
     //console.log('this is the list weight: ', weight);
     list.weight = weight;
   });
-  return otherLists;
+  return filteredLists;
 };
 
 const recommendList = (weightedLists) => {

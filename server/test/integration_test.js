@@ -537,7 +537,7 @@ describe('Book-thing.io:', () => {
     it('weightList function returns weights', () => {
 
       let returnVal;
-      returnVal = weightLists(myList, otherLists);
+      returnVal = weightLists(myList, [...otherLists, myList]);
       returnVal.should.be.an('array');
       returnVal.should.have.length(3);
       returnVal[0].should.have.property('weight').which.is.a('number');
