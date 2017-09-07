@@ -200,7 +200,7 @@ app.get('/api/recommendation/:listid',
           .join('users', 'users.id', '=', 'lists_to_users.user_id')
           .select('users.id', 'users.first_name');
       }).then( list_creator => {
-        console.log("this is the person who created the list: ", list_creator[0]);
+        console.log('this is the person who created the list: ', list_creator[0]);
         recommendation.creator_id = list_creator[0].id;
         recommendation.creator_name = list_creator[0].first_name;
         res.status(200).json(recommendation);

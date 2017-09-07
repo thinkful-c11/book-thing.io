@@ -393,7 +393,7 @@ describe('Book-thing.io:', () => {
             .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
             .then( _res => {
               let recList = _res.body;
-              console.log("this is the value returned in the test: ", recList);
+              console.log('this is the value returned in the test: ', recList);
               _res.should.have.status(200);
               recList.should.be.an('Object');
               recList.should.have.property('id').which.is.a('number');
