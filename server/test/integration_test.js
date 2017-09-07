@@ -31,8 +31,8 @@ const seedListData = (userID) => {
   return seedBookData()
   .then(res => {
     books = res;
-    newList.books = books;
-    newList2.books = books;
+    newList.books = books.slice(0, 5);
+    newList2.books = books.slice(4, 9);
     return knex('lists')
       .insert(
       [
@@ -205,6 +205,18 @@ describe('Book-thing.io:', () => {
           });
       });
 
+      it('should throw an error for invalid path', () => {
+        return chai.request(app)
+          .get('/INVALID_PATH')
+          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .then(() => {
+            throw new Error('Path exists!');
+          }).catch(err => {
+            err.should.have.status(404);
+          });
+      });
+
+
       it('should return books with correct fields', () => {
         let res;
         return chai.request(app)
@@ -223,6 +235,18 @@ describe('Book-thing.io:', () => {
               book.should.have.property('title');
               book.should.have.property('id').which.is.a('number');
             });
+          });
+      });
+
+      xit('should throw error upon rejection', () => {
+        return chai.request(app)
+          .get('/api/library')
+          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .then(res => {
+            throw new Error('Takes passed value!');
+          })
+          .catch(err => {
+            err.should.have.status(500);
           });
       });
 
@@ -322,7 +346,7 @@ describe('Book-thing.io:', () => {
             list.liked_flag.should.be.false;
             list.likes.should.be.a('number').which.is.equal(0);
             list.should.have.property('books');
-            list.books.should.be.an('array').which.has.length(10);
+            list.books.should.be.an('array').which.has.length(5);
             list.books.forEach(book => {
               book.should.be.a('object');
               book.should.have.property('bookTitle').which.is.a('string');
@@ -333,6 +357,34 @@ describe('Book-thing.io:', () => {
         });
       });
     });
+
+    describe('/api/recommendation/', () => {
+
+      it('should return an array of lists', () => {
+        return knex('lists')
+          .limit(1)
+          .then( results => {
+            //console.log('logging in the test: ', results);
+            let listID = results[0].id;
+            return chai.request(app)
+            .get(`/api/recommendation/${listID}`)
+            .then( _res => {
+              let recList = _res.body;
+              console.log('results of the get: ', recList);
+              _res.should.have.status(200);
+              recList.should.be.an('Object');
+              recList.should.have.property('id').which.is.a('number');
+              recList.should.have.property('list_id').which.is.a('number');
+              recList.list_id.should.not.be.equal(listID);
+              recList.should.have.property('user_id').which.is.a('number');
+              recList.should.have.property('created_flag').which.is.a('boolean');
+              recList.created_flag.should.be.equal(false);
+              recList.should.have.property('liked_flag').which.is.a('boolean');
+            });
+          });
+      });
+    });
+
   });
 
   describe('POST endpoint', () => {
@@ -413,7 +465,8 @@ describe('Book-thing.io:', () => {
               })
               .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
               .join('books', 'books.id', '=', 'books_to_lists.book_id')
-              .select('lists.id','lists.list_name', 'lists.tags', 'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
+              .select('lists.id','lists.list_name', 'lists.tags', 
+                'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
                 'books.author', 'books.blurb');
           })
           .then(_res => {
@@ -467,8 +520,6 @@ describe('Book-thing.io:', () => {
 
   describe('Recommendations algorithm testing', () => {
 
-
-
     const myList = {
       list_id: 42,
       list_name: 'Sci-fi',
@@ -476,13 +527,13 @@ describe('Book-thing.io:', () => {
       likes_counter: 42,
       books: [
         {
-          book_id: 1,
+          id: 1,
           title: 'Hitchhiker\'s Guide to the Galaxy',
           author: 'Douglas Adams',
           blurb: 'Marvin is the mopiest robot, ever!'
         },
         {
-          book_id: 2,
+          id: 2,
           title: 'I, Robot',
           author: 'Isaac Asimov',
           blurb: 'Save me from this AI madness'
@@ -499,13 +550,13 @@ describe('Book-thing.io:', () => {
         likes_counter: 12334354,
         books: [
           {
-            book_id: 17,
+            id: 17,
             title: 'Twilight',
             author: 'Stephanie Meyer',
             blurb: 'Team Edward, 4ever!'
           },
           {
-            book_id: 18,
+            id: 18,
             title: 'The Hunger Games',
             author: 'Suzanne Collins',
             blurb: 'Team Peeta, 4ever! He is the best'
@@ -519,19 +570,19 @@ describe('Book-thing.io:', () => {
         likes_counter: 5,
         books : [
           {
-            book_id: 35,
+            id: 35,
             title: 'Do Android\'s Dream of Electric Sheep?',
             author: 'Phillip K. Dick',
             blurb: 'Must watch Blade Runner soon'
           },
           {
-            book_id: 36,
+            id: 36,
             title: 'Ender\'s Game',
             author: 'Orson Scott Card',
             blurb: 'WOW, the movie... just wow'
           },
           {
-            book_id: 37,
+            id: 37,
             title: 'Leviathan Wakes',
             author: 'S.A. Corey',
             blurb: 'Loved this. Can\'t wait to watch the show!'
@@ -545,19 +596,19 @@ describe('Book-thing.io:', () => {
         likes_counter: 100,
         books: [
           {
-            book_id: 100,
+            id: 100,
             title: 'Saga, Vol 1',
             author: 'Brian K. Vaughan',
             blurb: 'So great! Really, really want to read more!'
           },
           {
-            book_id: 101,
+            id: 101,
             title: 'Ready Player One',
             author: 'Ernest Cline',
             blurb: 'The 80s references really make this book'
           },
           {
-            book_id: 1,
+            id: 1,
             title: 'Hitchhiker\'s Guide to the Galaxy',
             author: 'Douglas Adams',
             blurb: '42! But what is the question?'

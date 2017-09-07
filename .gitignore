@@ -1,6 +1,9 @@
 node_modules
 .nyc_output
 .env
+.DS_Store
 ./client/package-lock.json
 ./package-lock.json
 server/secret.js
+server/.DS_Store
+server/coverage/
