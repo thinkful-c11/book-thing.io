@@ -205,6 +205,18 @@ describe('Book-thing.io:', () => {
           });
       });
 
+      it('should throw an error for invalid path', () => {
+        return chai.request(app)
+          .get('/INVALID_PATH')
+          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .then(() => {
+            throw new Error('Path exists!');
+          }).catch(err => {
+            err.should.have.status(404);
+          });
+      });
+
+
       it('should return books with correct fields', () => {
         let res;
         return chai.request(app)
@@ -223,6 +235,18 @@ describe('Book-thing.io:', () => {
               book.should.have.property('title');
               book.should.have.property('id').which.is.a('number');
             });
+          });
+      });
+
+      xit('should throw error upon rejection', () => {
+        return chai.request(app)
+          .get('/api/library')
+          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .then(res => {
+            throw new Error('Takes passed value!');
+          })
+          .catch(err => {
+            err.should.have.status(500);
           });
       });
 
@@ -334,7 +358,7 @@ describe('Book-thing.io:', () => {
       });
     });
 
-    describe('/api/lists/', () => {
+    describe('/api/recommendation/', () => {
 
       it('should return an array of lists', () => {
         return knex('lists')
@@ -343,11 +367,19 @@ describe('Book-thing.io:', () => {
             //console.log('logging in the test: ', results);
             let listID = results[0].id;
             return chai.request(app)
-            .get(`/api/lists/${listID}`)
+            .get(`/api/recommendation/${listID}`)
             .then( _res => {
-              //console.log('results of the get: ', _res.body);
+              let recList = _res.body;
+              console.log('results of the get: ', recList);
               _res.should.have.status(200);
-              _res.body.should.be.an('Object');
+              recList.should.be.an('Object');
+              recList.should.have.property('id').which.is.a('number');
+              recList.should.have.property('list_id').which.is.a('number');
+              recList.list_id.should.not.be.equal(listID);
+              recList.should.have.property('user_id').which.is.a('number');
+              recList.should.have.property('created_flag').which.is.a('boolean');
+              recList.created_flag.should.be.equal(false);
+              recList.should.have.property('liked_flag').which.is.a('boolean');
             });
           });
       });
@@ -433,7 +465,8 @@ describe('Book-thing.io:', () => {
               })
               .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
               .join('books', 'books.id', '=', 'books_to_lists.book_id')
-              .select('lists.id','lists.list_name', 'lists.tags', 'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
+              .select('lists.id','lists.list_name', 'lists.tags', 
+                'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
                 'books.author', 'books.blurb');
           })
           .then(_res => {
@@ -486,8 +519,6 @@ describe('Book-thing.io:', () => {
   });
 
   describe('Recommendations algorithm testing', () => {
-
-
 
     const myList = {
       list_id: 42,
