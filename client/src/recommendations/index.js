@@ -42,8 +42,7 @@ class Recommendations extends React.Component {
       books: this.state.userBooks
     };
 
-    this.props.dispatch(actions.createList(list, this.props.user.token));
-    this.props.dispatch(actions.fetchList(this.props.user.token, this.props.user.id));
+    this.props.dispatch(actions.createList(list, this.props.user.token, this.props.user.id));
   }
 
   handleNewBook(event) {
@@ -66,6 +65,8 @@ class Recommendations extends React.Component {
   }
 
   render() {
+    console.log(this.props.myRecs);
+    const recomendation = this.props.myRecs.list_id;
     console.log("My List", this.props.myList);
     const list = this.props.myList.map((list, index) => {
       let bookList = list.books.map((book, index) => {
@@ -81,7 +82,10 @@ class Recommendations extends React.Component {
         );
       });
       return (
-        <ul key={index}>
+        <ul key={index} onClick={() => {
+          this.props.dispatch(actions.fetchRecomendations(this.props.user.token, list.listId));
+          console.log(this.props.user.token, list.listId);
+        }}>
           <h1>List Name: {list.listTitle}</h1>
           <br/>
           Number of likes: {list.likes}
@@ -141,7 +145,7 @@ class Recommendations extends React.Component {
         </section>
         <section>
           Top Recommendations for You
-          <ul/>
+          <div>{recomendation}</div>
         </section>
         <section>
           Try these
@@ -151,6 +155,6 @@ class Recommendations extends React.Component {
     );
   }
 }
-const mapStateToProps = state => ({myBooks: state.library, user: state.user, myList: state.list});
+const mapStateToProps = state => ({myBooks: state.library, user: state.user, myList: state.list, myRecs: state.rec});
 
 export default connect(mapStateToProps)(Recommendations);

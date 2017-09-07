@@ -7,7 +7,8 @@ const initialState = {
   user: {
     loggedIn: false
   },
-  list: []
+  list: [],
+  rec: {}
 };
 
 export const reducer = (state = initialState, action) => {
@@ -19,6 +20,9 @@ export const reducer = (state = initialState, action) => {
       });
     case actions.SET_LIST:
       return Object.assign({}, state, {list: action.list});
+    case actions.SET_RECS:
+      console.log(action.recs);
+      return Object.assign({}, state, {rec: action.recs});
     case actions.SET_USER:
       return Object.assign({}, state, {
         user: {

@@ -4,6 +4,9 @@ export const setLibrary = books => ({type: SET_LIBRARY, books});
 export const SET_USER = "SET_USER";
 export const setUser = (user, token) => ({type: SET_USER, user, token});
 
+export const SET_RECS = "SET_RECS";
+export const setRecs = recs => ({type: SET_RECS, recs});
+
 export const LOG_OUT_USER = "LOG_OUT_USER";
 export const logOutUser = () => ({type: LOG_OUT_USER});
 
@@ -60,6 +63,26 @@ export const fetchList = (token, user_id) => dispatch => {
     return response.json();
   }).then(list => {
     dispatch(setList(list));
+    console.log("fList", list);
+  }).catch(err => {
+    console.error(err);
+  });
+};
+
+export const fetchRecomendations = (token, listid) => dispatch => {
+  console.log("I've made it")
+  return fetch(`/api/recommendation/${listid}`, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }).then(response => {
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    return response.json();
+  }).then(recs => {
+    console.log("recs", recs);
+    dispatch(setRecs(recs));
   }).catch(err => {
     console.error(err);
   });
@@ -79,7 +102,7 @@ export const createBook = (books, token) => dispatch => {
   });
 };
 
-export const createList = (list, token) => dispatch => {
+export const createList = (list, token, user_id) => dispatch => {
   return fetch("/api/list", {
     method: "post",
     body: JSON.stringify(list),
@@ -88,6 +111,9 @@ export const createList = (list, token) => dispatch => {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     }
+  }).then(res => res.json()).then(res => {
+    dispatch(fetchList(token, user_id));
+    console.log("createList", res);
   }).catch(err => {
     console.error(err);
   });
