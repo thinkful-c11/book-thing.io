@@ -179,23 +179,31 @@ app.get('/api/recommendation/:listid',
         return Promise.all(promises);
       }).then(() => {
         recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
-        //console.log('the recommended list: ', recommendation);
+        console.log('the recommended list: ', recommendation);
         return knex('lists_to_users')
           .where({
             list_id: req.params.listid,
             created_flag: true
           }).select('user_id');
       }).then(result => {
-        //console.log(result[0].user_id);
+        console.log(result[0].user_id);
         return knex('lists_to_users')
           .insert({
             user_id: result[0].user_id,
             list_id: recommendation.id,
             created_flag: false
           }).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
-      }).then(final_result => {
-        //console.log('the final boss: ', final_result);
-        res.status(200).json(final_result[0]);
+      }).then( final_result => {
+        console.log('the final boss: ', final_result);
+        return knex('lists_to_users')
+          .where({list_id:final_result[0].list_id, created_flag: true})
+          .join('users', 'users.id', '=', 'lists_to_users.user_id')
+          .select('users.id', 'users.first_name');
+      }).then( list_creator => {
+        console.log("this is the person who created the list: ", list_creator[0]);
+        recommendation.creator_id = list_creator[0].id;
+        recommendation.creator_name = list_creator[0].first_name;
+        res.status(200).json(recommendation);
       }).catch(error => {
         res.status(500);
         console.error('Internal server error', error);
