@@ -2,7 +2,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
-const expect = chai.expect;
 const knexCleaner = require('knex-cleaner');
 process.env.NODE_ENV = 'test';
 const {app, runServer, closeServer} = require('../index');
@@ -435,71 +434,75 @@ describe('Book-thing.io:', () => {
       ]
     };
 
-    it('should return a status of 401 when incorrect login info is provided', () => {
-      return chai.request(app)
+    describe ('/api/library POSTS', () => {
+      it('should return a status of 401 when incorrect login info is provided', () => {
+        return chai.request(app)
+          .post('/api/library')
+          .send(newBook)
+          .catch(err => {
+            err.response.should.have.status(401);
+            err.response.text.should.equal('Unauthorized');
+          });
+      });
+
+      it('should add a book to the database', () => {
+
+        return chai.request(app)
         .post('/api/library')
         .send(newBook)
-        .catch(err => {
-          err.response.should.have.status(401);
-          err.response.text.should.equal('Unauthorized');
+        .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+        .then(res => {
+          res.should.have.status(201);
+          return knex('books')
+            .where({
+              title: newBook.title,
+              author: newBook.author,
+              blurb: newBook.blurb
+            });
+        })
+        .then(_res => {
+          let book = _res[0];
+          book.should.have.property('id').which.is.a('number');
+          book.title.should.be.equal(newBook.title);
+          book.author.should.be.equal(newBook.author);
+          book.blurb.should.be.equal(newBook.blurb);
         });
-    });
-
-    it('should add a book to the database', () => {
-
-      return chai.request(app)
-      .post('/api/library')
-      .send(newBook)
-      .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
-      .then(res => {
-        res.should.have.status(201);
-        return knex('books')
-          .where({
-            title: newBook.title,
-            author: newBook.author,
-            blurb: newBook.blurb
-          });
-      })
-      .then(_res => {
-        let book = _res[0];
-        book.should.have.property('id').which.is.a('number');
-        book.title.should.be.equal(newBook.title);
-        book.author.should.be.equal(newBook.author);
-        book.blurb.should.be.equal(newBook.blurb);
       });
     });
 
-    it('should return the id of a user-list association', () => {
+    describe ('/api/list POSTS', () => {
+      it('should return the id of a user-list association', () => {
 
-      return knex('users').where({user_id: 43214})
-        .then((_res) => {
-          newList.user_id = _res[0].id;
-          return chai.request(app)
-          .post('/api/list')
-          .send(newList)
-          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
-          .then(res => {
-            res.should.have.status(201);
-            res.body.should.be.an('array');
-            res.body[0].should.be.a('number');
-            return knex('lists')
-              .where({
-                list_name: newList.list_name
-              })
-              .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
-              .join('books', 'books.id', '=', 'books_to_lists.book_id')
-              .select('lists.id','lists.list_name', 'lists.tags',
-                'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
-                'books.author', 'books.blurb');
-          })
-          .then(_res => {
-            let list = _res[0];
-            list.should.have.property('id').which.is.a('number');
-            list.list_name.should.be.equal(newList.list_name);
-            list.tags.should.be.equal(newList.tags);
-            list.likes_counter.should.be.equal(0);
+        return knex('users').where({user_id: 43214})
+          .then((_res) => {
+            newList.user_id = _res[0].id;
+            return chai.request(app)
+            .post('/api/list')
+            .send(newList)
+            .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+            .then(res => {
+              res.should.have.status(201);
+              res.body.should.be.an('array');
+              res.body[0].should.be.a('number');
+              return knex('lists')
+                .where({
+                  list_name: newList.list_name
+                })
+                .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
+                .join('books', 'books.id', '=', 'books_to_lists.book_id')
+                .select('lists.id','lists.list_name', 'lists.tags',
+                  'lists.likes_counter', 'books_to_lists.book_id', 'books.title',
+                  'books.author', 'books.blurb');
+            })
+            .then(_res => {
+              let list = _res[0];
+              list.should.have.property('id').which.is.a('number');
+              list.list_name.should.be.equal(newList.list_name);
+              list.tags.should.be.equal(newList.tags);
+              list.likes_counter.should.be.equal(0);
+            });
           });
-        });
+      });
     });
   });
 
