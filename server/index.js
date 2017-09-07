@@ -1,7 +1,10 @@
+'use strict';
+
 const express = require('express');
 const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const {TEST_DATABASE, PORT, CLIENT_ID, CLIENT_SECRET} = require('./config');
+const {recommendList, weightLists} = require('./recommendations');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const parser = require('body-parser');
 const passport = require('passport');
@@ -10,7 +13,7 @@ const app = express();
 let secret = {
   CLIENT_ID,
   CLIENT_SECRET
-}
+};
 
 app.use(passport.initialize());
 app.use(parser.json());
@@ -24,13 +27,19 @@ passport.use(new GoogleStrategy({
   knex('users').where('user_id', profile.id).then(_user => {
     user = _user[0];
     if (!user) {
-      return knex('users').insert({user_id: profile.id, first_name: profile.name.givenName, last_name: profile.name.familyName, access_token: accessToken}).returning('*');
+      return knex('users')
+        .insert({user_id: profile.id, first_name: profile.name.givenName, 
+          last_name: profile.name.familyName, access_token: accessToken})
+        .returning('*');
     } else {
-      return knex('users').where('user_id', user.user_id).update({access_token: accessToken}).returning('*');
+      return knex('users')
+        .where('user_id', user.user_id)
+        .update({access_token: accessToken})
+        .returning('*');
     }
   }).then(user => {
     return cb(null, user[0]);
-  })
+  });
 }));
 
 passport.use(new BearerStrategy((token, done) => {
@@ -40,7 +49,7 @@ passport.use(new BearerStrategy((token, done) => {
       return done(null, false);
     }
     return done(null, user);
-  }).catch(err => console.log(err))
+  }).catch(err => console.log(err));
 }));
 
 passport.use(new BearerStrategy((token, done) => {
@@ -50,7 +59,7 @@ passport.use(new BearerStrategy((token, done) => {
       return done(null, false);
     }
     return done(null, user);
-  }).catch(err => console.log(err))
+  }).catch(err => console.log(err));
 }));
 
 app.use((req, res, next) => {
@@ -75,20 +84,86 @@ app.get('/api/auth/google/callback', passport.authenticate('google', {
   res.redirect('/');
 });
 
-app.get('/api/me', passport.authenticate('bearer', {session: false}), (req, res) => {
-  res.status(200).json({id: req.user.id, user_id: req.user.user_id, first_name: req.user.first_name, last_name: req.user.last_name});
-})
-
-app.get('/api/library', passport.authenticate('bearer', {session: false}), (req, res) => {
-  return knex.select('*').from('books').then(results => {
-    res.status(200).json(results);
-  }).catch(error => {
-    res.status(500);
-    console.error('Internal server error', error);
+app.get('/api/me', passport.authenticate('bearer', {session: false}), 
+  (req, res) => {
+    res.status(200).json({id: req.user.id, user_id: req.user.user_id, 
+      first_name: req.user.first_name, last_name: req.user.last_name});
   });
+
+app.get('/api/library', passport.authenticate('bearer', {session: false}), 
+(req, res) => {
+  return knex
+    .select('*')
+    .from('books')
+    .then(results => {
+      res.status(200).json(results);
+    }).catch(error => {
+      res.status(500);
+      console.error('Internal server error', error);
+    });
 });
 
-app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
+app.get('/api/recommendation/:listid', (req, res) => {
+  let myListToReturn;
+  let otherListsToReturn;
+  const promises = [];
+  let recommendation = [];
+  return knex('lists')
+    .where({id: req.params.listid})
+    .then(results => {
+      myListToReturn = results[0];
+    }).then(() => {
+      return knex('books_to_lists')
+        .where({list_id: myListToReturn.id})
+        .join('books', 'books.id', '=', 'books_to_lists.book_id')
+        .select('books.id', 'books.title', 'books.author', 'books.blurb');
+    }).then(_res => {
+      myListToReturn.books = _res;
+      return knex('lists');
+        
+    }).then(results => {
+      //console.log("all the lists created: ", results);
+      otherListsToReturn = results;
+      otherListsToReturn.forEach( otherList => {
+        promises.push(knex('books_to_lists')
+        .where({list_id: otherList.id})
+        .join('books', 'books.id', '=', 'books_to_lists.book_id')
+        .select('books.id', 'books.title', 'books.author', 'books.blurb')
+        .then(results => {
+          let index = otherListsToReturn.findIndex(list => { return list.id === otherList.id; });
+          otherListsToReturn[index].books = results;
+        }));
+      });
+    }).then( () => {
+      return Promise.all(promises);
+    }).then(() => {
+      recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
+      //console.log('the recommended list: ', recommendation);
+      return knex('lists_to_users')
+        .where({
+          list_id: req.params.listid,
+          created_flag: true
+        }).select('user_id');
+    }).then(result => {
+      //console.log(result[0].user_id);
+      return knex('lists_to_users')
+        .insert(
+        {
+          user_id : result[0].user_id, 
+          list_id: recommendation.id,
+          created_flag: false
+        }).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
+    }).then(final_result => {
+      //console.log('the final boss: ', final_result);
+      res.status(200).json(final_result[0]);
+    }).catch(error => {
+      res.status(500);
+      console.error('Internal server error', error);
+    });
+});
+
+app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false}), 
+(req, res) => {
   return knex('lists_to_users').where({user_id: req.params.id})
     .join('lists', 'lists_to_users.list_id', '=', 'lists.id')
     .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
@@ -115,13 +190,14 @@ app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false})
             books: []
           });
         }
-        results[resultIndex].books.push({bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
-      })
+        results[resultIndex].books.push(
+          {bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
+      });
       res.status(200).json(results);
     }).catch(error => {
       res.status(500);
       console.error('Internal server error', error);
-  });
+    });
 });
 
 app.get('/api/auth/logout', (req, res) => {
@@ -130,18 +206,23 @@ app.get('/api/auth/logout', (req, res) => {
   res.redirect('/');
 });
 
-app.post('/api/library', passport.authenticate('bearer', {session: false}), (req, res) => {
+app.post('/api/library', passport.authenticate('bearer', {session: false}), 
+(req, res) => {
   return knex('books').insert(req.body).returning('id').then(results => {
     res.status(201).send();
   }).catch(error => {
     res.status(500);
     console.error('Internal server error', error);
-  })
+  });
 });
 
-app.post('/api/list', passport.authenticate('bearer', {session: false}), (req, res) => {
+app.post('/api/list', passport.authenticate('bearer', {session: false}), 
+(req, res) => {
   let listID;
-  return knex('lists').insert({list_name: req.body.list_name, tags: req.body.tags}).returning('id').then(res => {
+  return knex('lists')
+    .insert({list_name: req.body.list_name, tags: req.body.tags})
+    .returning('id')
+  .then(res => {
     listID = res[0];
     return knex('books').insert(req.body.books).returning('id');
   }).then(_res => {
@@ -154,7 +235,10 @@ app.post('/api/list', passport.authenticate('bearer', {session: false}), (req, r
 
     return knex('books_to_lists').insert(listBookIDs);
   }).then(() => {
-    return knex('lists_to_users').insert({list_id: `${listID}`, user_id: `${req.body.user_id}`, liked_flag: false}).returning('id');
+    return knex('lists_to_users')
+      .insert({list_id: `${listID}`, user_id: `${req.body.user_id}`, 
+        liked_flag: false})
+      .returning('id');
   }).then(results => {
     res.status(201).json(results);
   }).catch(error => {
@@ -163,12 +247,17 @@ app.post('/api/list', passport.authenticate('bearer', {session: false}), (req, r
   });
 });
 
-app.put('/api/lists/likes/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
-  return knex('lists').where('id', '=', `${req.params.id}`).increment('likes_counter', 1).returning('likes_counter').then(_res => {
+app.put('/api/lists/likes/:id', passport.authenticate('bearer', {session: false}), 
+(req, res) => {
+  return knex('lists')
+    .where('id', '=', `${req.params.id}`)
+    .increment('likes_counter', 1)
+    .returning('likes_counter')
+  .then(_res => {
     res.status(200).json(_res);
   }).catch(err => {
     res.status(500);
-    console.error('Internal server error', erro);
+    console.error('Internal server error', err);
   });
 });
 
