@@ -63,7 +63,6 @@ export const fetchList = (token, user_id) => dispatch => {
     return response.json();
   }).then(list => {
     dispatch(setList(list));
-    console.log("fList", list);
   }).catch(err => {
     console.error(err);
   });
@@ -82,7 +81,7 @@ export const fetchRecomendations = (token, listid) => dispatch => {
     return response.json();
   }).then(recs => {
     console.log("recs", recs);
-    dispatch(setRecs(recs));
+    dispatch(setRecs([recs]));
   }).catch(err => {
     console.error(err);
   });
@@ -113,21 +112,22 @@ export const createList = (list, token, user_id) => dispatch => {
     }
   }).then(res => res.json()).then(res => {
     dispatch(fetchList(token, user_id));
-    console.log("createList", res);
   }).catch(err => {
     console.error(err);
   });
 };
 
-export const updateLikes = (list, list_id, token) => dispath => {
-  return fetch('/api/lists/likes/:list_id', {
+export const updateLikes = (list_id, token) => dispath => {
+  return fetch(`/api/lists/likes/${list_id}`, {
     method: "put",
-    body: JSON.stringify(list),
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`
     }
+  }).then(res => res.json()).then(res => {
+    console.log('this', res[0]);
+    dispath(setLikes(res[0]));
   }).catch(err => {
     console.error(err);
   });

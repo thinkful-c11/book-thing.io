@@ -15,6 +15,10 @@ class Recommendations extends React.Component {
     };
   }
 
+  componentDidMount() {
+    this.props.dispatch(actions.fetchList(this.props.user.token, this.props.user.id));
+  }
+
   handleListCreation(event) {
     event.preventDefault();
     const list = {
@@ -65,8 +69,18 @@ class Recommendations extends React.Component {
   }
 
   render() {
-    console.log(this.props.myRecs);
-    const recomendation = this.props.myRecs.list_id;
+    console.log("Recs", this.props.myRecs);
+    console.log("Likes", this.props.likes);
+    const recomendation = this.props.myRecs.map((rec, index) => {
+      // rec.likes_counter = this.props.likes;
+      return <li key={index} onClick={() => {
+        this.props.dispatch(actions.updateLikes(rec.id, this.props.user.token));
+      }}>
+        List Name: {rec.list_name}<br/>
+        Created By: {rec.creator_name}<br/>
+        Likes: {rec.likes_counter}
+      </li>
+    });
     console.log("My List", this.props.myList);
     const list = this.props.myList.map((list, index) => {
       let bookList = list.books.map((book, index) => {
@@ -84,7 +98,6 @@ class Recommendations extends React.Component {
       return (
         <ul key={index} onClick={() => {
           this.props.dispatch(actions.fetchRecomendations(this.props.user.token, list.listId));
-          console.log(this.props.user.token, list.listId);
         }}>
           <h1>List Name: {list.listTitle}</h1>
           <br/>
@@ -144,12 +157,9 @@ class Recommendations extends React.Component {
           <div>{list}</div>
         </section>
         <section>
-          Top Recommendations for You
-          <div>{recomendation}</div>
-        </section>
-        <section>
-          Try these
-          <ul/>
+          Recommendations for You
+          <ul>
+            {recomendation}</ul>
         </section>
       </div>
     );

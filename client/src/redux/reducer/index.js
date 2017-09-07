@@ -8,7 +8,7 @@ const initialState = {
     loggedIn: false
   },
   list: [],
-  rec: {}
+  rec: []
 };
 
 export const reducer = (state = initialState, action) => {
@@ -18,6 +18,15 @@ export const reducer = (state = initialState, action) => {
         library: action.books,
         success: true
       });
+    case actions.SET_LIKES:
+      return Object.assign({}, state, {
+        //VERY WRONGGGGGG
+        list: [
+          {
+            ...action.likes + 1
+          }
+        ]
+      })
     case actions.SET_LIST:
       return Object.assign({}, state, {list: action.list});
     case actions.SET_RECS:
