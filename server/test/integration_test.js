@@ -394,15 +394,22 @@ describe('Book-thing.io:', () => {
             .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
             .then( _res => {
               let recList = _res.body;
+              console.log("this is the value returned in the test: ", recList);
               _res.should.have.status(200);
               recList.should.be.an('Object');
               recList.should.have.property('id').which.is.a('number');
-              recList.should.have.property('list_id').which.is.a('number');
-              recList.list_id.should.not.be.equal(listID);
-              recList.should.have.property('user_id').which.is.a('number');
-              recList.should.have.property('created_flag').which.is.a('boolean');
-              recList.created_flag.should.be.equal(false);
-              recList.should.have.property('liked_flag').which.is.a('boolean');
+              recList.id.should.not.be.equal(listID);
+              recList.should.have.property('creator_id').which.is.a('number');
+              recList.should.have.property('list_name').which.is.a('string');
+              recList.should.have.property('likes_counter').which.is.a('number');
+              recList.should.have.property('tags').which.is.a('string');
+              recList.should.have.property('books').which.is.an('array');
+              recList.books.length.should.equal(5);
+              recList.should.have.property('weight').which.is.a('number');
+              recList.weight.should.equal(2);
+              recList.should.have.property('creator_id').which.is.a('number');
+              recList.should.have.property('creator_name').which.is.a('string');
+              recList.creator_name.should.equal('Jimmy');
             });
           });
       });
