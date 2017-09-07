@@ -368,6 +368,16 @@ describe('Book-thing.io:', () => {
           });
       });
 
+      it ('should return 400 when given wrong inputs', () => {
+        return chai.request(app)
+          .get('/api/recommendation/yay')
+          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .catch(err => {
+            err.response.should.have.status(400);
+            err.response.text.should.equal('Invalid Input');
+          });
+      });
+
       it ('should return 200 when correct authorization is passed', () => {
         return knex('lists')
           .limit(1)
@@ -393,7 +403,6 @@ describe('Book-thing.io:', () => {
             .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
             .then( _res => {
               let recList = _res.body;
-              console.log('this is the value returned in the test: ', recList);
               _res.should.have.status(200);
               recList.should.be.an('Object');
               recList.should.have.property('id').which.is.a('number');

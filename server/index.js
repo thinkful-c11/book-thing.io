@@ -31,6 +31,7 @@ passport.use(new GoogleStrategy({
   clientSecret: secret.CLIENT_SECRET,
   callbackURL: '/api/auth/google/callback'
 }, (accessToken, refreshToken, profile, cb) => {
+  console.log('when do I get here?');
   let user;
   knex('users').where('user_id', profile.id).then(_user => {
     user = _user[0];
@@ -66,16 +67,6 @@ passport.use(new BearerStrategy((token, done) => {
   }).catch(err => console.log(err));
 }));
 
-passport.use(new BearerStrategy((token, done) => {
-  return knex('users').where('access_token', token).then(_user => {
-    let user = _user[0];
-    if (!user) {
-      return done(null, false);
-    }
-    return done(null, user);
-  }).catch(err => console.log(err));
-}));
-
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -96,6 +87,7 @@ app.get('/api/auth/google/callback', passport.authenticate('google', {
   failureRedirect: '/',
   session: false
 }), (req, res) => {
+  console.log(req.url);
   res.cookie('accessToken', req.user.access_token, {
     expires: 0
   });
@@ -137,7 +129,17 @@ app.get('/api/recommendation/:listid',
     session: false
   }),
   (req, res) => {
-    console.log('I don\'t want to be here');
+
+    if (isNaN(req.params.listid)) {
+      try {
+        throw new Error('Invalid Input');
+      } catch (e) {
+        console.error(e.name + ': ' + e.message);
+        res.status(400).send(e.message);
+      }
+      return;
+    }
+
     let myListToReturn;
     let otherListsToReturn;
     const promises = [];
@@ -159,7 +161,6 @@ app.get('/api/recommendation/:listid',
         myListToReturn.books = _res;
         return knex('lists');
       }).then(results => {
-        //console.log("all the lists created: ", results);
         otherListsToReturn = results;
         otherListsToReturn.forEach(otherList => {
           promises.push(knex('books_to_lists')
@@ -179,14 +180,12 @@ app.get('/api/recommendation/:listid',
         return Promise.all(promises);
       }).then(() => {
         recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
-        console.log('the recommended list: ', recommendation);
         return knex('lists_to_users')
           .where({
             list_id: req.params.listid,
             created_flag: true
           }).select('user_id');
       }).then(result => {
-        console.log(result[0].user_id);
         return knex('lists_to_users')
           .insert({
             user_id: result[0].user_id,
@@ -194,13 +193,11 @@ app.get('/api/recommendation/:listid',
             created_flag: false
           }).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
       }).then( final_result => {
-        console.log('the final boss: ', final_result);
         return knex('lists_to_users')
           .where({list_id:final_result[0].list_id, created_flag: true})
           .join('users', 'users.id', '=', 'lists_to_users.user_id')
           .select('users.id', 'users.first_name');
       }).then( list_creator => {
-        console.log('this is the person who created the list: ', list_creator[0]);
         recommendation.creator_id = list_creator[0].id;
         recommendation.creator_name = list_creator[0].first_name;
         res.status(200).json(recommendation);
