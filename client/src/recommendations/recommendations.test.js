@@ -17,30 +17,19 @@ it("renders without crashing", () => {
   </Provider>, div);
 });
 
-xit("dispatches createBook from handleSubmit", () => {
+xit("dispatches createBook from handleListCreation", () => {
   const list = {
-    listName: "a list name",
-    tags: "some tags",
-    blurb: "blurb"
-  };
-
+    listName: ''
+  }
   const buttonClick = sinon.spy();
   const dispatch = jest.fn();
-  const wrapper = mount(
-    <Provider store={store}>
-      <Recommendations list={list} dispatch={dispatch}/>
-    </Provider>
-  );
+  const wrapper = shallow(<Recommendations store={store} list={list}/>);
+  expect(wrapper.node.props.list.listName).toEqual('');
+  wrapper.find("button.submitList").simulate('click');
   wrapper.find("input.listName").simulate("keypress", {
     target: {
       value: list.listName
     }
   });
-  wrapper.find("input.tags").simulate("keypress", {
-    target: {
-      value: list.tags
-    }
-  });
-  wrapper.find("button.submitBook").simulate("click");
-  expect(list.listName).toEqual(list.listName);
+  expect(wrapper.node.props.list.listName).toEqual('listName');
 });

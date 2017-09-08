@@ -1,0 +1,17 @@
+nav {
+  display: flex;
+  margin-left: auto;
+  justify-content: space-around;
+  width: 40vw;
+  margin-top: 15px;
+}
+
+nav a {
+  text-decoration: none;
+}
+
+nav p {
+  text-decoration: none;
+  color: white;
+  font-family: "Cabin";
+}
