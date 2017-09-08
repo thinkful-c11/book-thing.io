@@ -290,7 +290,6 @@ app.put('/api/lists/likes/:id',
         console.error('Internal server error', err);
       });
   });
-});
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
