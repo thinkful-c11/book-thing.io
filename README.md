@@ -15,7 +15,7 @@ We wanted a book recommendation app that was community driven. Books and lists a
 
 ### Build Status
 
-[![Build Status](https://travis-ci.org/thinkful-c11/book-thing.io.svg?branch=master)]
+![Build Status](https://travis-ci.org/thinkful-c11/book-thing.io.svg?branch=master)
 
 ### Screenshots
 
