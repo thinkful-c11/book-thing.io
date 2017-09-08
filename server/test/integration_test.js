@@ -2,13 +2,48 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
-const knexCleaner = require('knex-cleaner');
 process.env.NODE_ENV = 'test';
 const {app, runServer, closeServer} = require('../index');
 const {TEST_DATABASE} = require('../config');
 const {weightLists, recommendList} = require('../recommendations');
 const knex = require('knex')(TEST_DATABASE);
 chai.use(chaiHttp);
+
+const user1 = {
+  user_id: 43214,
+  first_name: 'Jimmy',
+  last_name: 'BlueJeans',
+  access_token: '1927goiugrlkjsghfd87g23'
+};
+
+const user2 = {
+  user_id: 41234,
+  first_name: 'Arthur',
+  last_name: 'Dent',
+  access_token:'idontthinkireallyneedthis'
+};
+
+// const newList = {
+//   user_id: null,
+//   list_name: 'Test List',
+//   tags:'#test#dab#lit#fam#1#why',
+//   books: []
+// };
+
+// const newList2 = {
+//   user_id: null,
+//   list_name: 'Test List 2',
+//   tags:'#test#how#',
+//   books: []
+// };
+
+// const newList3 = {
+//   user_id: null,
+//   list_name: 'Test List 3',
+//   tags: '#test#'
+// }
+
+
 
 const seedListData = (userID) => {
   console.info('seeding list data');
@@ -18,13 +53,14 @@ const seedListData = (userID) => {
   const newList = {
     user_id: userID,
     list_name: 'Test List',
-    tags:'#test#dab#lit#fam',
+    tags:'#test#dab#lit#fam#1#why',
     books: []
   };
+  
   const newList2 = {
     user_id: userID,
     list_name: 'Test List 2',
-    tags:'#test',
+    tags:'#test#how#',
     books: []
   };
   const seedData = [];
@@ -93,7 +129,8 @@ const seedListData = (userID) => {
 const seedBookData = () => {
   console.info('seeding book data');
   const seedData = [];
-  for (let i=0; i<10; i++) {
+  let list_length = Math.random() * 20;
+  for (let i=0; i<list_length; i++) {
     seedData.push({
       title: `Test title ${i}`,
       author: `test author ${i}`,
@@ -103,15 +140,10 @@ const seedBookData = () => {
   return knex.insert(seedData).into('books').returning('id');
 };
 
-const seedUserData = () => {
+const seedUserData = (user) => {
   console.info('seeding user data');
   return knex('users')
-    .insert({
-      user_id: 43214,
-      first_name: 'Jimmy',
-      last_name: 'BlueJeans',
-      access_token: '1927goiugrlkjsghfd87g23'
-    })
+    .insert(user)
     .returning('id');
 };
 
@@ -145,7 +177,13 @@ describe('Book-thing.io:', () => {
           .del();
       })
       .then(() => {
-        return seedUserData();
+        return seedUserData(user1);
+      })
+      .then(user => {
+        return seedListData(user[0]);
+      })
+      .then(() => {
+        return seedUserData(user2);
       })
       .then(user => {
         return seedListData(user[0]);
@@ -417,7 +455,7 @@ describe('Book-thing.io:', () => {
               recList.weight.should.equal(2);
               recList.should.have.property('creator_id').which.is.a('number');
               recList.should.have.property('creator_name').which.is.a('string');
-              recList.creator_name.should.equal('Jimmy');
+              recList.creator_name.should.equal('Arthur');
             });
           });
       });
