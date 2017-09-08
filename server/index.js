@@ -81,7 +81,6 @@ app.get('/api/library', passport.authenticate('bearer', {session: false}), (req,
   });
 });
 
-<<<<<<<HEAD
 app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session: false}), (req, res) => {
 
   if (isNaN(req.params.listid)) {
