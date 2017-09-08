@@ -25,6 +25,10 @@ We wanted a book recommendation app that was community driven. Books and lists a
 2. Run the database_script.sql file to build your table structure
 3. Create a .env file in your server folder which contains the path to your database as well as your client id and secret
 4. Obtain a client id and secret by setting up your app with [the google developers console](https://console.developers.google.com/)
+5. Run your project with
+```
+npm run dev
+```
 
 ## Running the tests
 
@@ -76,9 +80,6 @@ npm run test:client
 * **Tanner Gill** - ** - Front-End development/testing, styling
 * **Patrice White** - ** - Front-End development/testing, styling
 
-## License
-
-
 ## Acknowledgments
 
-* **Ben Pardo** - ** - Great Savior
+* **Ben Pardo** - ** - The Great Savior, The Wise Sage
