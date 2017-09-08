@@ -15,11 +15,6 @@ class Recommendations extends React.Component {
     };
   }
 
-  //STATE IS A PROBLEM!!!!!!
-  //problems
-  //Duplciate books being created
-  //Like counter not updating on recs
-
   componentDidMount() {
     this.props.dispatch(actions.fetchList(this.props.user.token, this.props.user.id));
   }
@@ -74,8 +69,6 @@ class Recommendations extends React.Component {
   }
 
   render() {
-    console.log("Recs", this.props.myRecs);
-    console.log("Likes", this.props.likes);
     const recommendation = this.props.myRecs.map((rec, index) => {
       return <li key={index} onClick={() => {
         this.props.dispatch(actions.updateLikes(rec.id, this.props.user.token));
@@ -85,7 +78,6 @@ class Recommendations extends React.Component {
         Likes: {rec.likes_counter}
       </li>
     });
-    console.log("My List", this.props.myList);
     const list = this.props.myList.map((list, index) => {
       let bookList = list.books.map((book, index) => {
         return (
@@ -119,7 +111,6 @@ class Recommendations extends React.Component {
       );
     });
     let userForm;
-    console.log(this.state.list);
     if (!this.state.list.listName) {
       userForm = (
         <form>

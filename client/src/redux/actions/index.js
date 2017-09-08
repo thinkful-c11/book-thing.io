@@ -71,7 +71,6 @@ export const fetchList = (token, user_id) => dispatch => {
 };
 
 export const fetchRecomendations = (token, listid) => dispatch => {
-  console.log("I've made it")
   return fetch(`/api/recommendation/${listid}`, {
     headers: {
       Authorization: `Bearer ${token}`
@@ -82,7 +81,6 @@ export const fetchRecomendations = (token, listid) => dispatch => {
     }
     return response.json();
   }).then(recs => {
-    console.log("recs", recs);
     dispatch(setRecs([recs]));
     dispatch(setRecLikes(recs.likes_counter, recs.id));
   }).catch(err => {
@@ -129,7 +127,6 @@ export const updateLikes = (list_id, token) => dispatch => {
       Authorization: `Bearer ${token}`
     }
   }).then(res => res.json()).then(res => {
-    console.log('this', res[0]);
     dispatch(setLikes(res[0], list_id));
     dispatch(fetchRecomendations(token, list_id));
   }).catch(err => {

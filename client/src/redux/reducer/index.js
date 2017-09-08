@@ -22,7 +22,6 @@ export const reducer = (state = initialState, action) => {
       let index = state.list.findIndex((l, index) => {
         return l.listId === action.list_id;
       });
-      console.log("index", index);
       return Object.assign({}, state, {
         list: Array.prototype.concat(state.list.slice(0, index), Object.assign({}, state.list.slice()[index], {likes: action.likes}), state.list.slice(index + 1, state.list.length))
       });
@@ -33,7 +32,6 @@ export const reducer = (state = initialState, action) => {
     case actions.SET_LIST:
       return Object.assign({}, state, {list: action.list});
     case actions.SET_RECS:
-      console.log(action.recs);
       return Object.assign({}, state, {rec: action.recs});
     case actions.SET_USER:
       return Object.assign({}, state, {
