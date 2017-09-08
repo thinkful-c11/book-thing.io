@@ -17,7 +17,7 @@ it("renders without crashing", () => {
   </Provider>, div);
 });
 
-it("changes loggedIn prop from false to true", () => {
+xit("changes loggedIn prop from false to true", () => {
   const wrapper = mount(
     <Provider store={store}>
       <MemoryRouter>
