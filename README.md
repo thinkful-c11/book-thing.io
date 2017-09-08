@@ -60,7 +60,10 @@ npm run test:client
 
 ## Authors
 
-* **** - ** - [
+* **Author** - ** -
+* **Author** - ** -
+* **Author** - ** -
+* **Author** - ** -
 
 ## License
 
