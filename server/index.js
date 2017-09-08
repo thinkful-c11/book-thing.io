@@ -3,16 +3,8 @@
 const express = require('express');
 const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const {
-  TEST_DATABASE,
-  PORT,
-  CLIENT_ID,
-  CLIENT_SECRET
-} = require('./config');
-const {
-  recommendList,
-  weightLists
-} = require('./recommendations');
+const { TEST_DATABASE, PORT, CLIENT_ID, CLIENT_SECRET } = require('./config');
+const { recommendList, weightLists } = require('./recommendations');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const parser = require('body-parser');
 const passport = require('passport');
