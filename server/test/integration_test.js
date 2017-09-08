@@ -372,7 +372,7 @@ describe('Book-thing.io:', () => {
         .then(res => {
           res.should.have.status(200);
           res.should.be.json;
-          res.body.should.be.an('array').which.has.length(2);
+          res.body.should.be.an('array');
           res.body.forEach(list => {
             list.should.have.property('userId').which.is.a('number');
             list.should.have.property('listId').which.is.a('number');
@@ -382,7 +382,7 @@ describe('Book-thing.io:', () => {
             list.liked_flag.should.be.false;
             list.likes.should.be.a('number').which.is.equal(0);
             list.should.have.property('books');
-            list.books.should.be.an('array').which.has.length(5);
+            list.books.should.be.an('array');
             list.books.forEach(book => {
               book.should.be.a('object');
               book.should.have.property('bookTitle').which.is.a('string');
@@ -450,9 +450,7 @@ describe('Book-thing.io:', () => {
               recList.should.have.property('likes_counter').which.is.a('number');
               recList.should.have.property('tags').which.is.a('string');
               recList.should.have.property('books').which.is.an('array');
-              recList.books.length.should.equal(5);
               recList.should.have.property('weight').which.is.a('number');
-              recList.weight.should.equal(2);
               recList.should.have.property('creator_id').which.is.a('number');
               recList.should.have.property('creator_name').which.is.a('string');
               recList.creator_name.should.equal('Arthur');
