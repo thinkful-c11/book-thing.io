@@ -60,9 +60,7 @@ npm run test:client
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+* **** - ** - [
 
 ## License
 
