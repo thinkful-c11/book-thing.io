@@ -4,9 +4,9 @@ const chaiHttp = require('chai-http');
 const should = chai.should();
 process.env.NODE_ENV = 'test';
 const {app, runServer, closeServer} = require('../index');
-const {TEST_DATABASE} = require('../config');
+const {DATABASE} = require('../config');
 const {weightLists, recommendList} = require('../recommendations');
-const knex = require('knex')(TEST_DATABASE);
+const knex = require('knex')(DATABASE);
 chai.use(chaiHttp);
 
 const user1 = {
@@ -149,7 +149,7 @@ const seedUserData = (user) => {
 
 describe('Book-thing.io:', () => {
 
-  before(() => runServer(undefined, TEST_DATABASE));
+  before(() => runServer(undefined, DATABASE));
 
   after(() => {
     return knex.destroy()
