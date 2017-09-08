@@ -85,38 +85,33 @@ class Recommendations extends React.Component {
     const list = this.props.myList.map((list, index) => {
       let bookList = list.books.map((book, index) => {
         return (
-          <li key={index}>
-            Title: {book.bookTitle}
-            <br/>
-            Author: {book.bookAuthor}
-            <br/>
-            Blurb: {book.blurb}
-            <br/>
-          </li>
+          <ul className="book-container" key={index}>
+            <li>Title: {book.bookTitle}</li>
+            <li>Author: {book.bookAuthor}</li>
+            <li>Blurb: {book.blurb}</li>
+          </ul>
         );
       });
       return (
-        <ul key={index} onClick={() => {
+        <div className="list-info-container" key={index} onClick={() => {
           this.props.dispatch(actions.fetchRecomendations(this.props.user.token, list.listId));
         }}>
-          <h1>List Name: {list.listTitle}</h1>
-          <br/>
-          Number of likes: {list.likes}
-          <br/> {bookList}
-        </ul>
+          <div>
+            <h5>{list.listTitle}</h5>
+            <p>{list.likes}</p>
+          </div>
+          {bookList}
+        </div>
       );
     });
 
     const books = this.state.userBooks.map((book, index) => {
       return (
-        <li key={index}>
-          Title: {book.title}
-          <br/>
-          Author: {book.author}
-          <br/>
-          Blurb: {book.blurb}
-          <br/>
-        </li>
+        <ul className="book-container" key={index}>
+          <li>{book.title}</li>
+          <li>{book.author}</li>
+          <li>{book.blurb}</li>
+        </ul>
       );
     });
     let userForm;
@@ -127,41 +122,52 @@ class Recommendations extends React.Component {
           <input className="listName" type="text" name="listName" placeholder="List Name" ref={listName => (this.listName = listName)}/>
           <input className="tags" type="text" name="tags" placeholder="tags" ref={tags => (this.tags = tags)}/>
           <button className="submitList" type="button" value="Submit" onClick={event => this.handleListCreation(event)}>
-            Create List
+            New List
           </button>
         </form>
       );
     } else {
       userForm = (
-        <form>
-          <input className="title" type="text" name="Title" placeholder="Title" ref={title => (this.title = title)}/>
-          <input className="author" type="text" name="Author" placeholder="Author" ref={author => (this.author = author)}/>
-          <textarea className="blurb" name="Blurb" placeholder="Blurb" ref={blurb => (this.blurb = blurb)}/>
-          <button className="submitBook" type="button" value="Submit" onClick={event => this.handleNewBook(event)}>
-            Create Book
-          </button>
-          <button className="submitList" type="button" value="Submit" onClick={event => this.handleSubmitList(event)}>
-            Create List
-          </button>
-        </form>
+        <div>
+          <form>
+            <input className="title" type="text" name="Title" placeholder="Title" ref={title => (this.title = title)}/>
+            <input className="author" type="text" name="Author" placeholder="Author" ref={author => (this.author = author)}/>
+            <textarea className="blurb" name="Blurb" placeholder="Blurb" ref={blurb => (this.blurb = blurb)}/>
+          </form>
+          <div className="form-button-container">
+            <button className="submitBook" type="button" value="Submit" onClick={event => this.handleNewBook(event)}>
+              Create Book
+            </button>
+            <button className="submitList" type="button" value="Submit" onClick={event => this.handleSubmitList(event)}>
+              Create List
+            </button>
+          </div>
+        </div>
       );
     }
     return (
-      <div>
-        <h1>Book Recommendations</h1>
-        <section>Create a new List {userForm}</section>
-        <section className="rec-list">
-          Books You Have Created
-          <ul>{books}</ul>
-          List You Have Created
+      <section className="rec-container">
+        <section className="rec-column-1">
+          <h3>Create a new List</h3>
+          {userForm}
+        </section>
+        <section className="rec-list rec-column-2">
+          <h3>Books You Have Created</h3>
+          <div>{books}</div>
+          <h3>List You Have Created</h3>
           <div>{list}</div>
         </section>
-        <section>
-          Recommendations for You
-          <ul>
-            {recomendation}</ul>
+        <section className="rec-column-3">
+          <section>
+            <h3>Top Recommendations for You</h3>
+            <div>{recomendation}</div>
+          </section>
+          <section>
+            <h3>Try these</h3>
+            <ul/>
+          </section>
         </section>
-      </div>
+      </section>
     );
   }
 }

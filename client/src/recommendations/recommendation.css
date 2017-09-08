@@ -2,7 +2,7 @@ form {
   padding-top: 2%;
 }
 
-form input[type=text] {
+form input[type="text"] {
   width: 70%;
   padding: 12px 20px;
   margin: 8px 0;
@@ -29,6 +29,23 @@ form button {
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-family: "Cabin";
+  text-transform: uppercase;
+  font-weight: 200;
+  letter-spacing: 2px;
+}
+
+div button {
+  width: 70%;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: "Cabin";
+  text-transform: uppercase;
+  font-weight: 200;
+  letter-spacing: 2px;
 }
 
 .rec-list {
@@ -37,4 +54,70 @@ form button {
 
 .rec-list li {
   list-style: none;
+}
+
+.rec-container {
+  display: flex;
+  justify-content: space-around;
+  margin: 0 auto;
+  width: 90vw;
+  height: 90vh;
+}
+
+.rec-container > section {
+  margin: 25px;
+  padding: 25px;
+  background-color: white;
+  border-radius: 10px;
+  width: 100%;
+  overflow-y: auto;
+}
+
+.rec-container h3 {
+  font-family: "Cabin";
+  text-transform: uppercase;
+  text-align: left;
+  width: 80%;
+  padding: 10px;
+  font-size: 1.3em;
+  margin: 0;
+  margin-bottom: 15px;
+  border-bottom: 1px solid grey;
+}
+
+.list-info-container > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-info-container h5 {
+  font-family: "Cabin";
+  font-size: 1em;
+  text-align: left;
+  margin: 0;
+}
+
+.list-info-container p {
+  font-family: "Open Sans";
+  color: green;
+  font-weight: 400;
+  margin: 0;
+  margin-right: 30px;
+}
+
+.book-container {
+  display: flex;
+  flex-direction: column;
+  margin: 15px;
+  padding: 0;
+  background-color: lightgray;
+  border-radius: 4px;
+  padding: 6px;
+}
+
+.book-container li {
+  font-family: "Cabin";
+  text-align: left;
+  color: black;
+  margin: 3px;
 }
