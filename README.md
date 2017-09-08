@@ -39,6 +39,7 @@ npm run test:client
 ### Front-End
 * React
 * Redux
+* React-Router
 
 ### Back-End
 * Postgress
@@ -54,18 +55,27 @@ npm run test:client
 
 ## Features
 
+* Create a list of books
+* Add your favorite books
+* Like lists to get recommendations
+* See every book currently in the library
+
 ## Code Example
 
 ## Demo
 
+- [Live Demo](https://book-thing.herokuapp.com/)
+
 ## Authors
 
-* **Author** - ** -
-* **Author** - ** -
-* **Author** - ** -
-* **Author** - ** -
+* **Sonja Duric** - ** - Database design/Back-End development
+* **Jonathan Fitzgibbon** - ** - Back-End development/testing
+* **Tanner Gill** - ** - Front-End development/testing, styling
+* **Patrice White** - ** - Front-End development/testing, styling
 
 ## License
 
 
 ## Acknowledgments
+
+* **Ben Pardo** - ** - Great Savior
