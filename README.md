@@ -13,11 +13,11 @@ A community driven, book recommendation application. Users can create lists of t
 
 We wanted a book recommendation app that was community driven. Books and lists are all created by the users.
 
-### Build Status
+## Build Status
 
 ![Build Status](https://travis-ci.org/thinkful-c11/book-thing.io.svg?branch=master)
 
-### Screenshots
+## Screenshots
 
 
 
