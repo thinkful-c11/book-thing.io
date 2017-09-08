@@ -226,9 +226,6 @@ app.get('/api/usersLists/:id',
             blurb: list.blurb
           });
         });
-      }
-      results[resultIndex].books.push({bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
-    });
     res.status(200).json(results);
   }).catch(error => {
     res.status(500);
