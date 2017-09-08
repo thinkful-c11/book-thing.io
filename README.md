@@ -22,13 +22,17 @@ Login Screen/Landing Page:
 
 ![login screen](screenshots/login.png)
 
+About:
+
+![about](screenshots/about.png)
+
 Library:
 
-![library]
+![library](screenshots/library.png)
 
 Recommendations:
 
-![recommendations]
+![recommendations](screenshots/recommendations.png)
 
 ## Environment Setup
 
