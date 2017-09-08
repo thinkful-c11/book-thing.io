@@ -19,25 +19,17 @@ export const reducer = (state = initialState, action) => {
         success: true
       });
     case actions.SET_LIKES:
-      let index;
-      if (action.list_id) {
-        index = state.list.findIndex((l, index) => {
-          return l.listId === action.list_id;
-        });
-        console.log("index", index);
-        return Object.assign({}, state, {
-          list: Array.prototype.concat(state.list.slice(0, index), Object.assign({}, state.list.slice()[index], {likes: action.likes}), state.list.slice(index + 1, state.list.length))
-        });
-      } else if (action.listid) {
-        index = state.list.findIndex((l, index) => {
-          return l.id === action.list_id;
-        });
-        console.log("index2", index);
-        return Object.assign({}, state, {
-          list: Array.prototype.concat(state.rec.slice(0, index), Object.assign({}, state.rec.slice()[index], {likes_counter: action.likes}), state.rec.slice(index + 1, state.rec.length))
-        });
-      }
-      // action.likes + 1
+      let index = state.list.findIndex((l, index) => {
+        return l.listId === action.list_id;
+      });
+      console.log("index", index);
+      return Object.assign({}, state, {
+        list: Array.prototype.concat(state.list.slice(0, index), Object.assign({}, state.list.slice()[index], {likes: action.likes}), state.list.slice(index + 1, state.list.length))
+      });
+    case actions.SET_REC_LIKES:
+      return Object.assign({}, state, {
+        rec: [Object.assign({}, state.rec[0], {likes_counter: action.likes_counter})]
+      })
     case actions.SET_LIST:
       return Object.assign({}, state, {list: action.list});
     case actions.SET_RECS:

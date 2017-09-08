@@ -7,6 +7,9 @@ export const setUser = (user, token) => ({type: SET_USER, user, token});
 export const SET_RECS = "SET_RECS";
 export const setRecs = recs => ({type: SET_RECS, recs});
 
+export const SET_REC_LIKES = "SET_REC_LIKES";
+export const setRecLikes = (likes_counter, id) => ({type: SET_REC_LIKES, likes_counter, id});
+
 export const LOG_OUT_USER = "LOG_OUT_USER";
 export const logOutUser = () => ({type: LOG_OUT_USER});
 
@@ -81,7 +84,7 @@ export const fetchRecomendations = (token, listid) => dispatch => {
   }).then(recs => {
     console.log("recs", recs);
     dispatch(setRecs([recs]));
-    //dispatch(setLikes(recs.likes_counter, listid));
+    dispatch(setRecLikes(recs.likes_counter, recs.id));
   }).catch(err => {
     console.error(err);
   });
