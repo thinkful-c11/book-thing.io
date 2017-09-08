@@ -132,7 +132,7 @@ app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session:
     console.error('Internal server error', error);
   });
 });
-=======app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session: false}), (req, res) => {
+app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session: false}), (req, res) => {
   console.log('I don\'t want to be here');
   let myListToReturn;
   let otherListsToReturn;
@@ -178,7 +178,6 @@ app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session:
     console.error('Internal server error', error);
   });
 });
->>>>>>>frontend - wiring
 
 app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
   return knex('lists_to_users').where({user_id: req.params.id, created_flag: true}).join('lists', 'lists_to_users.list_id', '=', 'lists.id').join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id').join('books', 'books.id', '=', 'books_to_lists.book_id').select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag', 'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title', 'books.author', 'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter').then(_results => {
