@@ -3,8 +3,9 @@
 const express = require('express');
 const path = require('path');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const {TEST_DATABASE, PORT, CLIENT_ID, CLIENT_SECRET} = require('./config');
-const {recommendList, weightLists} = require('./recommendations');
+
+const { DATABASE, PORT, CLIENT_ID, CLIENT_SECRET } = require('./config');
+const { recommendList, weightLists } = require('./recommendations');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const parser = require('body-parser');
 const passport = require('passport');
@@ -93,114 +94,138 @@ app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session:
     return;
   }
 
-  let myListToReturn;
-  let otherListsToReturn;
-  const promises = [];
-  let recommendation = [];
-  return knex('lists').where({id: req.params.listid}).then(results => {
-    myListToReturn = results[0];
-  }).then(() => {
-    return knex('books_to_lists').where({list_id: myListToReturn.id}).join('books', 'books.id', '=', 'books_to_lists.book_id').select('books.id', 'books.title', 'books.author', 'books.blurb');
-  }).then(_res => {
-    myListToReturn.books = _res;
-    return knex('lists');
-  }).then(results => {
-    otherListsToReturn = results;
-    otherListsToReturn.forEach(otherList => {
-      promises.push(knex('books_to_lists').where({list_id: otherList.id}).join('books', 'books.id', '=', 'books_to_lists.book_id').select('books.id', 'books.title', 'books.author', 'books.blurb').then(results => {
-        let index = otherListsToReturn.findIndex(list => {
-          return list.id === otherList.id;
-        });
-        otherListsToReturn[index].books = results;
-      }));
-    });
-  }).then(() => {
-    return Promise.all(promises);
-  }).then(() => {
-    recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
-    return knex('lists_to_users').where({list_id: req.params.listid, created_flag: true}).select('user_id');
-  }).then(result => {
-    return knex('lists_to_users').insert({user_id: result[0].user_id, list_id: recommendation.id, created_flag: false}).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
-  }).then(final_result => {
-    return knex('lists_to_users').where({list_id: final_result[0].list_id, created_flag: true}).join('users', 'users.id', '=', 'lists_to_users.user_id').select('users.id', 'users.first_name');
-  }).then(list_creator => {
-    recommendation.creator_id = list_creator[0].id;
-    recommendation.creator_name = list_creator[0].first_name;
-    res.status(200).json(recommendation);
-  }).catch(error => {
-    res.status(500);
-    console.error('Internal server error', error);
-  });
-});
-app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session: false}), (req, res) => {
-  console.log('I don\'t want to be here');
-  let myListToReturn;
-  let otherListsToReturn;
-  const promises = [];
-  let recommendation = [];
-  return knex('lists').where({id: req.params.listid}).then(results => {
-    myListToReturn = results[0];
-  }).then(() => {
-    return knex('books_to_lists').where({list_id: myListToReturn.id}).join('books', 'books.id', '=', 'books_to_lists.book_id').select('books.id', 'books.title', 'books.author', 'books.blurb');
-  }).then(_res => {
-    myListToReturn.books = _res;
-    return knex('lists');
-  }).then(results => {
-    //console.log("all the lists created: ", results);
-    otherListsToReturn = results;
-    otherListsToReturn.forEach(otherList => {
-      promises.push(knex('books_to_lists').where({list_id: otherList.id}).join('books', 'books.id', '=', 'books_to_lists.book_id').select('books.id', 'books.title', 'books.author', 'books.blurb').then(results => {
-        let index = otherListsToReturn.findIndex(list => {
-          return list.id === otherList.id;
-        });
-        otherListsToReturn[index].books = results;
-      }));
-    });
-  }).then(() => {
-    return Promise.all(promises);
-  }).then(() => {
-    recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
-    console.log('the recommended list: ', recommendation);
-    return knex('lists_to_users').where({list_id: req.params.listid, created_flag: true}).select('user_id');
-  }).then(result => {
-    console.log(result[0].user_id);
-    return knex('lists_to_users').insert({user_id: result[0].user_id, list_id: recommendation.id, created_flag: false}).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
-  }).then(final_result => {
-    console.log('the final boss: ', final_result);
-    return knex('lists_to_users').where({list_id: final_result[0].list_id, created_flag: true}).join('users', 'users.id', '=', 'lists_to_users.user_id').select('users.id', 'users.first_name');
-  }).then(list_creator => {
-    console.log("this is the person who created the list: ", list_creator[0]);
-    recommendation.creator_id = list_creator[0].id;
-    recommendation.creator_name = list_creator[0].first_name;
-    res.status(200).json(recommendation);
-  }).catch(error => {
-    res.status(500);
-    console.error('Internal server error', error);
-  });
-});
 
-app.get('/api/usersLists/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
-  return knex('lists_to_users').where({user_id: req.params.id, created_flag: true}).join('lists', 'lists_to_users.list_id', '=', 'lists.id').join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id').join('books', 'books.id', '=', 'books_to_lists.book_id').select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag', 'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title', 'books.author', 'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter').then(_results => {
-    const results = [];
-    let listID;
-    let resultIndex = -1;
-    _results.forEach((list, index) => {
-      if (!listID || listID !== list.list_id) {
-        listID = list.list_id;
-        resultIndex++;
-        results.push({
-          liked_flag: _results[index].liked_flag,
-          likes: _results[index].likes_counter,
-          userId: _results[index].user_id,
-          listId: _results[index].list_id,
-          created_flag: _results[index].created_flag,
-          listTitle: _results[index].list_name,
-          tags: _results[index].tags,
-          books: []
+    let myListToReturn;
+    let otherListsToReturn;
+    const promises = [];
+    let recommendation = [];
+    let values = [];
+    return knex('lists')
+      .where({
+        id: req.params.listid
+      })
+      .then(results => {
+        myListToReturn = results[0];
+      }).then(() => {
+        return knex('books_to_lists')
+          .where({
+            list_id: myListToReturn.id
+          })
+          .join('books', 'books.id', '=', 'books_to_lists.book_id')
+          .select('books.id', 'books.title', 'books.author', 'books.blurb');
+      }).then(_res => {
+        myListToReturn.books = _res;
+        return knex('lists_to_users')
+          .where({list_id: req.params.listid, created_flag: true})
+          .select('user_id')
+          .then(res => {
+            console.log(res);
+            return knex('lists_to_users')
+              .where({created_flag:true})
+              .andWhereNot({user_id:res[0].user_id})
+              .select('list_id');
+          });
+      }).then( results => {
+        console.log("this is what i'm looking for: ", results);
+        results.forEach( res => { values.push(res.list_id); });
+        console.log(values);
+        return knex('lists').whereIn('id', values);
+      }).then(results => {
+        otherListsToReturn = results;
+        otherListsToReturn.forEach(otherList => {
+          promises.push(knex('books_to_lists')
+            .where({
+              list_id: otherList.id
+            })
+            .join('books', 'books.id', '=', 'books_to_lists.book_id')
+            .select('books.id', 'books.title', 'books.author', 'books.blurb')
+            .then(results => {
+              let index = otherListsToReturn.findIndex(list => {
+                return list.id === otherList.id;
+              });
+              otherListsToReturn[index].books = results;
+            }));
         });
-      }
-      results[resultIndex].books.push({bookTitle: list.title, bookAuthor: list.author, blurb: list.blurb});
-    });
+      }).then(() => {
+        return Promise.all(promises);
+      }).then(() => {
+        recommendation = recommendList(weightLists(myListToReturn, otherListsToReturn));
+        return knex('lists_to_users')
+          .where({
+            list_id: req.params.listid,
+            created_flag: true
+          }).select('user_id');
+      }).then(result => {
+
+        return knex('lists_to_users')
+          .whereNotExists( () => {
+            this.select('*').from('lists_to_users').where({
+              user_id: result[0].user_id,
+              list_id: recommendation.id,
+              created_flag: false
+            });
+          }).insert({
+            user_id: result[0].user_id,
+            list_id: recommendation.id,
+            created_flag: false
+          }).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
+      }).then( final_result => {
+        return knex('lists_to_users')
+          .where({list_id:final_result[0].list_id, created_flag: true})
+          .join('users', 'users.id', '=', 'lists_to_users.user_id')
+          .select('users.id', 'users.first_name');
+      }).then( list_creator => {
+        recommendation.creator_id = list_creator[0].id;
+        recommendation.creator_name = list_creator[0].first_name;
+        res.status(200).json(recommendation);
+      }).catch(error => {
+        res.status(500);
+        console.error('Internal server error', error);
+      });
+  }
+);
+
+app.get('/api/usersLists/:id',
+  passport.authenticate('bearer', {
+    session: false
+  }),
+  (req, res) => {
+    return knex('lists_to_users')
+      .where({
+        user_id: req.params.id,
+        created_flag: true
+      })
+      .join('lists', 'lists_to_users.list_id', '=', 'lists.id')
+      .join('books_to_lists', 'lists.id', '=', 'books_to_lists.list_id')
+      .join('books', 'books.id', '=', 'books_to_lists.book_id')
+      .select('lists_to_users.user_id', 'lists_to_users.list_id', 'lists_to_users.created_flag',
+        'lists.list_name', 'lists.tags', 'books_to_lists.book_id', 'books.title', 'books.author',
+        'books.blurb', 'lists_to_users.liked_flag', 'lists.likes_counter')
+      .then(_results => {
+        const results = [];
+        let listID;
+        let resultIndex = -1;
+        _results.forEach((list, index) => {
+          if (!listID || listID !== list.list_id) {
+            listID = list.list_id;
+            resultIndex++;
+            results.push({
+              liked_flag: _results[index].liked_flag,
+              likes: _results[index].likes_counter,
+              userId: _results[index].user_id,
+              listId: _results[index].list_id,
+              created_flag: _results[index].created_flag,
+              listTitle: _results[index].list_name,
+              tags: _results[index].tags,
+              books: []
+            });
+          }
+          results[resultIndex].books.push({
+            bookTitle: list.title,
+            bookAuthor: list.author,
+            blurb: list.blurb
+          });
+        });
     res.status(200).json(results);
   }).catch(error => {
     res.status(500);
@@ -247,14 +272,24 @@ app.post('/api/list', passport.authenticate('bearer', {session: false}), (req, r
   });
 });
 
-app.put('/api/lists/likes/:id', passport.authenticate('bearer', {session: false}), (req, res) => {
-  return knex('lists').where('id', '=', `${req.params.id}`).increment('likes_counter', 1).returning('likes_counter').then(_res => {
-    res.status(200).json(_res);
-  }).catch(err => {
-    res.status(500);
-    console.error('Internal server error', err);
+
+app.put('/api/lists/likes/:id',
+  passport.authenticate('bearer', {
+    session: false
+  }),
+  (req, res) => {
+    return knex('lists')
+      .where('id', '=', `${req.params.id}`)
+      .andWhere({})
+      .increment('likes_counter', 1)
+      .returning('likes_counter')
+      .then(_res => {
+        res.status(200).json(_res);
+      }).catch(err => {
+        res.status(500);
+        console.error('Internal server error', err);
+      });
   });
-});
 
 app.use(express.static(path.resolve(__dirname, '../client/build')));
 
@@ -266,7 +301,7 @@ app.get(/^(?!\/api(\/|$))/, (req, res) => {
 let server;
 let knex;
 
-const runServer = (port = PORT, database = TEST_DATABASE) => {
+const runServer = (port = PORT, database = DATABASE) => {
   return new Promise((resolve, reject) => {
     try {
       console.log('Database: ', database, 'Port: ', port);
