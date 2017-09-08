@@ -31,7 +31,6 @@ passport.use(new GoogleStrategy({
   clientSecret: secret.CLIENT_SECRET,
   callbackURL: '/api/auth/google/callback'
 }, (accessToken, refreshToken, profile, cb) => {
-  console.log('when do I get here?');
   let user;
   knex('users').where('user_id', profile.id).then(_user => {
     user = _user[0];
@@ -87,7 +86,6 @@ app.get('/api/auth/google/callback', passport.authenticate('google', {
   failureRedirect: '/',
   session: false
 }), (req, res) => {
-  console.log(req.url);
   res.cookie('accessToken', req.user.access_token, {
     expires: 0
   });
