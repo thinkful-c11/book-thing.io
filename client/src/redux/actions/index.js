@@ -13,7 +13,6 @@ export const logOutUser = () => ({type: LOG_OUT_USER});
 export const SET_LIST = "SET_LIST";
 export const setList = list => ({type: SET_LIST, list});
 
-//MAYBE??????? NO reducer yet
 export const SET_LIKES = "SET_LIKES";
 export const setLikes = (likes, list_id) => ({type: SET_LIKES, likes, list_id});
 
@@ -82,6 +81,7 @@ export const fetchRecomendations = (token, listid) => dispatch => {
   }).then(recs => {
     console.log("recs", recs);
     dispatch(setRecs([recs]));
+    //dispatch(setLikes(recs.likes_counter, listid));
   }).catch(err => {
     console.error(err);
   });
@@ -117,7 +117,7 @@ export const createList = (list, token, user_id) => dispatch => {
   });
 };
 
-export const updateLikes = (list_id, token) => dispath => {
+export const updateLikes = (list_id, token) => dispatch => {
   return fetch(`/api/lists/likes/${list_id}`, {
     method: "put",
     headers: {
@@ -127,7 +127,8 @@ export const updateLikes = (list_id, token) => dispath => {
     }
   }).then(res => res.json()).then(res => {
     console.log('this', res[0]);
-    dispath(setLikes(res[0], list_id));
+    dispatch(setLikes(res[0], list_id));
+    dispatch(fetchRecomendations(token, list_id));
   }).catch(err => {
     console.error(err);
   });
