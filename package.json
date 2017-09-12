@@ -1,7 +1,7 @@
 {
   "name": "boot-thing.io",
-  "version": "0.1.0",
-  "description": "A full-stack starter template",
+  "version": "0.4.0",
+  "description": "Community based book recommndation app",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
