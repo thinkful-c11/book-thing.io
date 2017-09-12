@@ -2,13 +2,48 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
-const knexCleaner = require('knex-cleaner');
 process.env.NODE_ENV = 'test';
 const {app, runServer, closeServer} = require('../index');
-const {TEST_DATABASE} = require('../config');
+const {DATABASE} = require('../config');
 const {weightLists, recommendList} = require('../recommendations');
-const knex = require('knex')(TEST_DATABASE);
+const knex = require('knex')(DATABASE);
 chai.use(chaiHttp);
+
+const user1 = {
+  user_id: 43214,
+  first_name: 'Jimmy',
+  last_name: 'BlueJeans',
+  access_token: '1927goiugrlkjsghfd87g23'
+};
+
+const user2 = {
+  user_id: 41234,
+  first_name: 'Arthur',
+  last_name: 'Dent',
+  access_token:'idontthinkireallyneedthis'
+};
+
+// const newList = {
+//   user_id: null,
+//   list_name: 'Test List',
+//   tags:'#test#dab#lit#fam#1#why',
+//   books: []
+// };
+
+// const newList2 = {
+//   user_id: null,
+//   list_name: 'Test List 2',
+//   tags:'#test#how#',
+//   books: []
+// };
+
+// const newList3 = {
+//   user_id: null,
+//   list_name: 'Test List 3',
+//   tags: '#test#'
+// }
+
+
 
 const seedListData = (userID) => {
   console.info('seeding list data');
@@ -18,13 +53,14 @@ const seedListData = (userID) => {
   const newList = {
     user_id: userID,
     list_name: 'Test List',
-    tags:'#test#dab#lit#fam',
+    tags:'#test#dab#lit#fam#1#why',
     books: []
   };
+  
   const newList2 = {
     user_id: userID,
     list_name: 'Test List 2',
-    tags:'#test',
+    tags:'#test#how#',
     books: []
   };
   const seedData = [];
@@ -93,7 +129,8 @@ const seedListData = (userID) => {
 const seedBookData = () => {
   console.info('seeding book data');
   const seedData = [];
-  for (let i=0; i<10; i++) {
+  let list_length = Math.random() * 20;
+  for (let i=0; i<list_length; i++) {
     seedData.push({
       title: `Test title ${i}`,
       author: `test author ${i}`,
@@ -103,21 +140,16 @@ const seedBookData = () => {
   return knex.insert(seedData).into('books').returning('id');
 };
 
-const seedUserData = () => {
+const seedUserData = (user) => {
   console.info('seeding user data');
   return knex('users')
-    .insert({
-      user_id: 43214,
-      first_name: 'Jimmy',
-      last_name: 'BlueJeans',
-      access_token: '1927goiugrlkjsghfd87g23'
-    })
+    .insert(user)
     .returning('id');
 };
 
 describe('Book-thing.io:', () => {
 
-  before(() => runServer(undefined, TEST_DATABASE));
+  before(() => runServer(undefined, DATABASE));
 
   after(() => {
     return knex.destroy()
@@ -145,7 +177,13 @@ describe('Book-thing.io:', () => {
           .del();
       })
       .then(() => {
-        return seedUserData();
+        return seedUserData(user1);
+      })
+      .then(user => {
+        return seedListData(user[0]);
+      })
+      .then(() => {
+        return seedUserData(user2);
       })
       .then(user => {
         return seedListData(user[0]);
@@ -334,7 +372,7 @@ describe('Book-thing.io:', () => {
         .then(res => {
           res.should.have.status(200);
           res.should.be.json;
-          res.body.should.be.an('array').which.has.length(2);
+          res.body.should.be.an('array');
           res.body.forEach(list => {
             list.should.have.property('userId').which.is.a('number');
             list.should.have.property('listId').which.is.a('number');
@@ -344,7 +382,7 @@ describe('Book-thing.io:', () => {
             list.liked_flag.should.be.false;
             list.likes.should.be.a('number').which.is.equal(0);
             list.should.have.property('books');
-            list.books.should.be.an('array').which.has.length(5);
+            list.books.should.be.an('array');
             list.books.forEach(book => {
               book.should.be.a('object');
               book.should.have.property('bookTitle').which.is.a('string');
@@ -412,12 +450,10 @@ describe('Book-thing.io:', () => {
               recList.should.have.property('likes_counter').which.is.a('number');
               recList.should.have.property('tags').which.is.a('string');
               recList.should.have.property('books').which.is.an('array');
-              recList.books.length.should.equal(5);
               recList.should.have.property('weight').which.is.a('number');
-              recList.weight.should.equal(2);
               recList.should.have.property('creator_id').which.is.a('number');
               recList.should.have.property('creator_name').which.is.a('string');
-              recList.creator_name.should.equal('Jimmy');
+              recList.creator_name.should.equal('Arthur');
             });
           });
       });
