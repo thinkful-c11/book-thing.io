@@ -42,7 +42,7 @@ export const reducer = (state = initialState, action) => {
         }
       });
     case actions.LOG_OUT_USER:
-      return Object({}, state, {
+      return Object.assign({}, state, {
         user: {
           loggedIn: false
         }
