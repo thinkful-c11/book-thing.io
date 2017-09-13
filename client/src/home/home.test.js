@@ -17,6 +17,7 @@ it("renders without crashing", () => {
   </Provider>, div);
 });
 
+//come back to this
 xit("changes loggedIn prop from false to true", () => {
   const wrapper = mount(
     <Provider store={store}>
@@ -25,6 +26,7 @@ xit("changes loggedIn prop from false to true", () => {
       </MemoryRouter>
     </Provider>
   );
+  console.log(store.getState());
   wrapper.find('.signIn').simulate('click');
   wrapper.setProps({loggedIn: 'true'});
   console.log("props", wrapper.props().loggedIn);
