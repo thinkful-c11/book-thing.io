@@ -10,13 +10,19 @@ exports.CLIENT_SECRET = process.env.CLIENT_SECRET || global.CLIENT_SECRET;
 exports.TEST_DATABASE = {
   client: 'pg',
   connection: TEST_DATABASE_URL,
-  pool: { min: 0, max: 3 }
+  pool: {
+    min: 0,
+    max: 3
+  }
 };
 
 exports.DATABASE = {
   client: 'pg',
   connection: DATABASE_URL,
-  pool: { min: 0, max: 3 }
+  pool: {
+    min: 0,
+    max: 3
+  }
 };
 
 exports.PORT = process.env.PORT || 3001;
