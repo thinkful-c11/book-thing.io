@@ -17,6 +17,23 @@ it("renders without crashing", () => {
   </Provider>, div);
 });
 
+it.only("allows us to play with mocks", () => {
+  function forEach(items, callback) {
+    for (let index = 0; index < items.length; index++) {
+      callback(items[index]);
+    }
+  }
+  const mockCallback = jest.fn();
+  forEach([
+    0, 1, 5
+  ], mockCallback);
+
+  expect(mockCallback.mock.calls.length).toBe(3);
+  expect(mockCallback.mock.calls[0][0]).toBe(0);
+  expect(mockCallback.mock.calls[1][0]).toBe(1);
+  expect(mockCallback.mock.calls[2][0]).toBe(5);
+});
+
 xit("dispatches createBook from handleListCreation", () => {
   const list = {
     listName: ''
