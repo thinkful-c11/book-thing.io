@@ -65,10 +65,12 @@ const seedListData = (userID) => {
   };
   const seedData = [];
   return seedBookData()
-  .then(res => {
-    books = res;
-    newList.books = books.slice(0, 5);
-    newList2.books = books.slice(4, 9);
+  .then(bookIDs => {
+    books = bookIDs;
+    const midIndexBooks = Math.floor(books.length/2);
+    //console.log("WHAT IS HAPPENING?!?!", midIndexBooks);
+    newList.books = books.slice(0, midIndexBooks);
+    newList2.books = books.slice(midIndexBooks, books.length-1);
     return knex('lists')
       .insert(
       [
@@ -84,9 +86,9 @@ const seedListData = (userID) => {
       )
       .returning('id');
   })
-  .then(res => {
-    listID = res[0];
-    listID2 = res[1];
+  .then(listsIDs => {
+    listID = listsIDs[0];
+    listID2 = listsIDs[1];
     const listBookIDs = [];
     newList.books.forEach(bookID => {
       listBookIDs.push(
@@ -113,13 +115,11 @@ const seedListData = (userID) => {
       [
         {
           list_id: listID,
-          user_id: userID,
-          liked_flag: false
+          user_id: userID
         },
         {
           list_id: listID2,
-          user_id: userID,
-          liked_flag: false
+          user_id: userID
         }
       ]
       );
@@ -129,7 +129,7 @@ const seedListData = (userID) => {
 const seedBookData = () => {
   console.info('seeding book data');
   const seedData = [];
-  let list_length = Math.random() * 20;
+  let list_length = Math.floor(Math.random() * 20) + 4;
   for (let i=0; i<list_length; i++) {
     seedData.push({
       title: `Test title ${i}`,
@@ -248,7 +248,7 @@ describe('Book-thing.io:', () => {
           .get('/INVALID_PATH')
           .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
           .then(() => {
-            throw new Error('Path does not exist!');
+            throw new Error('Path should not exist...but does!');
           }).catch(err => {
             err.should.have.status(404);
           });
@@ -276,12 +276,15 @@ describe('Book-thing.io:', () => {
           });
       });
 
-      it('should throw error upon rejection', () => {
+      it.only('should throw error upon rejection', () => {
         return chai.request(app)
           .get('/api/library')
           .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .then(res => {
+            res.should.have.status(500);
+          })
           .catch(err => {
-            console.log(err);
+            console.log("do we even get there?", err);
             err.should.have.status(500);
           });
       });
@@ -379,7 +382,7 @@ describe('Book-thing.io:', () => {
             list.created_flag.should.be.true;
             list.listTitle.should.be.a('string');
             list.tags.should.be.a('string');
-            list.liked_flag.should.be.false;
+            list.liked_flag.should.be.true;
             list.likes.should.be.a('number').which.is.equal(0);
             list.should.have.property('books');
             list.books.should.be.an('array');
