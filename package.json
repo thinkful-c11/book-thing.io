@@ -14,7 +14,9 @@
     "test:client": "cd client && npm test",
     "install": "run-s install:server install:client",
     "install:server": "cd server && npm install",
-    "install:client": "cd client && npm install"
+    "install:client": "cd client && npm install",
+    "debug": "run-p debug:server dev:client start",
+    "debug:server": "cd server && node --inspect=3042 index.js"
   },
   "cacheDirectories": [
     "node_modules",
