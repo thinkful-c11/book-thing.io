@@ -250,11 +250,11 @@ app.post('/api/library', passport.authenticate('bearer', {session: false}), (req
 
 app.post('/api/list', passport.authenticate('bearer', {session: false}), (req, res) => {
   let listID;
-  return knex('lists').insert({list_name: req.body.list_name, tags: req.body.tags}).returning('id').then(res => {
-    listID = res[0];
+  return knex('lists').insert({list_name: req.body.list_name, tags: req.body.tags}).returning('id').then(list_id => {
+    listID = list_id[0];
     return knex('books').insert(req.body.books).returning('id');
-  }).then(_res => {
-    const bookIDs = _res;
+  }).then(book_ids => {
+    const bookIDs = book_ids;
     const listBookIDs = [];
 
     bookIDs.forEach(bookID => {

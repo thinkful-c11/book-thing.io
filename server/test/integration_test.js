@@ -276,7 +276,8 @@ describe('Book-thing.io:', () => {
           });
       });
 
-      it.only('should throw error upon rejection', () => {
+      //this is intentionally broken - please fix me
+      it('should throw error upon rejection', () => {
         return chai.request(app)
           .get('/api/library')
           .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
@@ -529,8 +530,8 @@ describe('Book-thing.io:', () => {
       it('should return the id of a user-list association', () => {
 
         return knex('users').where({user_id: 43214})
-          .then((_res) => {
-            newList.user_id = _res[0].id;
+          .then(user => {
+            newList.user_id = user[0].id;
             return chai.request(app)
             .post('/api/list')
             .send(newList)
@@ -551,6 +552,7 @@ describe('Book-thing.io:', () => {
             })
             .then(_res => {
               let list = _res[0];
+              _res.length.should.be.equal(2);
               list.should.have.property('id').which.is.a('number');
               list.list_name.should.be.equal(newList.list_name);
               list.tags.should.be.equal(newList.tags);
@@ -594,6 +596,7 @@ describe('Book-thing.io:', () => {
 
       it ('should increment the likes counter of the correct list', () => {
         let listID;
+        let likesCounter;
         return knex('lists')
           .select('id')
           .then(_id => {
@@ -604,12 +607,15 @@ describe('Book-thing.io:', () => {
               .send();
           })
           .then(res => {
+            res.should.have.status(200);
+            res.should.be.json;
+            likesCounter = res.body[0];
             return knex('lists')
               .where('id', '=', listID)
               .select('likes_counter');
           })
           .then(_res => {
-            _res[0].likes_counter.should.equal(1);
+            _res[0].likes_counter.should.equal(likesCounter);
           });
       });
     });
