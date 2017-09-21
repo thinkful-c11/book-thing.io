@@ -113,25 +113,25 @@ app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session:
           })
           .join('books', 'books.id', '=', 'books_to_lists.book_id')
           .select('books.id', 'books.title', 'books.author', 'books.blurb');
-      }).then(_res => {
-        myListToReturn.books = _res;
+      }).then(myBooks => {
+        myListToReturn.books = myBooks;
         return knex('lists_to_users')
           .where({list_id: req.params.listid, created_flag: true})
           .select('user_id')
-          .then(res => {
-            console.log(res);
+          .then(myUserID => {
+            console.log(myUserID);
             return knex('lists_to_users')
               .where({created_flag:true})
-              .andWhereNot({user_id:res[0].user_id})
+              .andWhereNot({user_id:myUserID[0].user_id})
               .select('list_id');
           });
-      }).then( results => {
-        console.log("this is what i'm looking for: ", results);
-        results.forEach( res => { values.push(res.list_id); });
+      }).then( otherLists => {
+        console.log("this is what i'm looking for: ", otherLists);
+        otherLists.forEach( list => { values.push(list.list_id); });
         console.log(values);
         return knex('lists').whereIn('id', values);
-      }).then(results => {
-        otherListsToReturn = results;
+      }).then( lists => {
+        otherListsToReturn = lists;
         otherListsToReturn.forEach(otherList => {
           promises.push(knex('books_to_lists')
             .where({
@@ -139,11 +139,11 @@ app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session:
             })
             .join('books', 'books.id', '=', 'books_to_lists.book_id')
             .select('books.id', 'books.title', 'books.author', 'books.blurb')
-            .then(results => {
+            .then(potentialRecBooks => {
               let index = otherListsToReturn.findIndex(list => {
                 return list.id === otherList.id;
               });
-              otherListsToReturn[index].books = results;
+              otherListsToReturn[index].books = potentialRecBooks;
             }));
         });
       }).then(() => {
@@ -155,17 +155,17 @@ app.get('/api/recommendation/:listid', passport.authenticate('bearer', {session:
             list_id: req.params.listid,
             created_flag: true
           }).select('user_id');
-      }).then(result => {
+      }).then(myUserID => {
 
         return knex('lists_to_users')
           .whereNotExists( () => {
             this.select('*').from('lists_to_users').where({
-              user_id: result[0].user_id,
+              user_id: myUserID[0].user_id,
               list_id: recommendation.id,
               created_flag: false
             });
           }).insert({
-            user_id: result[0].user_id,
+            user_id: myUserID[0].user_id,
             list_id: recommendation.id,
             created_flag: false
           }).returning(['id', 'list_id', 'user_id', 'created_flag', 'liked_flag']);
