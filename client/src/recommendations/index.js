@@ -110,9 +110,9 @@ class Recommendations extends React.Component {
         </ul>
       );
     });
-    let userForm;
+    let userBookList;
     if (!this.state.list.listName) {
-      userForm = (
+      userBookList = (
         <form>
           <input className="listName" type="text" name="listName" placeholder="List Name" ref={listName => (this.listName = listName)}/>
           <input className="tags" type="text" name="tags" placeholder="tags" ref={tags => (this.tags = tags)}/>
@@ -122,7 +122,7 @@ class Recommendations extends React.Component {
         </form>
       );
     } else {
-      userForm = (
+      userBookList = (
         <div>
           <form>
             <input className="title" type="text" name="Title" placeholder="Title" ref={title => (this.title = title)}/>
@@ -144,7 +144,7 @@ class Recommendations extends React.Component {
       <section className="rec-container">
         <section className="rec-column-1">
           <h3>Create a new List</h3>
-          {userForm}
+          {userBookList}
         </section>
         <section className="rec-list rec-column-2">
           <h3>Books You Have Created</h3>
