@@ -13,3 +13,12 @@ it("renders without crashing", () => {
 });
 
 //displays books from databse
+xit("displays the books", () => {
+  const book = [
+    {
+      Title: "",
+      Author: " "
+    }
+  ];
+
+})
