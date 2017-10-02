@@ -34,7 +34,7 @@ export class Home extends React.Component {
               <h1>
                 The Ultimate Book<br/>Recommendation Engine
               </h1>
-              <Link to="/library">
+              <Link to="/recommendations">
                 <button>Get Started</button>
               </Link>
             </div>
