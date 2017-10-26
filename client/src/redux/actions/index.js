@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-fetch';
+
 export const SET_LIBRARY = "SET_LIBRARY";
 export const setLibrary = books => ({type: SET_LIBRARY, books});
 
@@ -37,6 +39,7 @@ export const fetchUser = accessToken => dispatch => {
 };
 
 export const fetchLibrary = token => dispatch => {
+  //Need absolute path for second error http://localhost:8080/api/library
   return fetch("/api/library", {
     headers: {
       Authorization: `Bearer ${token}`
