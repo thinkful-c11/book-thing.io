@@ -3,12 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "isomorphic-fetch": "^2.2.1",
     "js-cookie": "^2.1.4",
+    "nock": "^9.0.22",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-redux": "^5.0.6",
     "react-router-dom": "^4.2.2",
     "redux": "^3.7.2",
+    "redux-logger": "^3.0.6",
+    "redux-node-logger": "^0.1.0",
     "redux-thunk": "^2.2.0",
     "sinon": "^3.2.1",
     "whatwg-fetch": "^2.0.3"
