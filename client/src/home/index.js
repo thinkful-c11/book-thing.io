@@ -34,9 +34,9 @@ export class Home extends React.Component {
               <h1>
                 The Ultimate Book<br/>Recommendation Engine
               </h1>
-              <Link to="/library">
+              <a href="/api/auth/google">
                 <button>Get Started</button>
-              </Link>
+              </a>
             </div>
           </section>
         </header>
