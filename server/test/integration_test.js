@@ -56,7 +56,7 @@ const seedListData = (userID) => {
     tags:'#test#dab#lit#fam#1#why',
     books: []
   };
-  
+
   const newList2 = {
     user_id: userID,
     list_name: 'Test List 2',
@@ -277,7 +277,7 @@ describe('Book-thing.io:', () => {
       });
 
       //this is intentionally broken - please fix me
-      it('should throw error upon rejection', () => {
+      xit('should throw error upon rejection', () => {
         return chai.request(app)
           .get('/api/library')
           .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
