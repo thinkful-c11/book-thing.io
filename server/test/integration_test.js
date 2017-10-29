@@ -210,13 +210,16 @@ describe('Book-thing.io:', () => {
 
       //this is intentionally broken - please fix me
       xit('should throw error upon rejection', () => {
-        return chai.request(app).get('/api/library').set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23').then(res => {
-          console.log("res", res instanceof Promise);
-          res.reject('Something bad happened');
-        }).catch(err => {
-          console.log("do we even get there?", err);
-          err.should.have.status(500);
-        });
+        return chai.request(app)
+          .get('/api/library')
+          .set('Authorization', 'Bearer 1927goiugrlkjsghfd87g23')
+          .then(res => {
+            res.should.have.status(500);
+          })
+          .catch(err => {
+            console.log("do we even get there?", err);
+            err.should.have.status(500);
+          });
       });
 
       it('should draw the data from a database', () => {
